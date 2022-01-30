@@ -1,0 +1,26 @@
+{
+  "name": "Arjunio",
+  "version": "1.0.0",
+  "description": "wip",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Big-Cheung/Arjun.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Big-Cheung/Arjun.io/issues"
+  },
+  "homepage": "https://github.com/Big-Cheung/Arjun.io#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "node": "^17.4.0",
+    "socket.io": "^4.4.1"
+  }
+}
