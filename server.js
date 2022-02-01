@@ -4,16 +4,14 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 
-var io = new Server(server);
-
+const io = new Server(server);
 
 io.on('connection', function(socket) {
   //run console log on connect
   console.log("Player connected at ID " + socket.id);
-
   //add event handler to disconnect
   socket.on('disconnect', function() {
-    console.log("Player disconnected at ID " + socket.id)
+    console.log("Player disconnected at ID " + socket.id);
   });
 });
 
