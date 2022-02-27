@@ -1,2 +1,7 @@
 var socket = io();
-console.log("Test")
+
+//Handle the events
+socket.on("connect", () => {
+  console.log("Connected to server!");
+});
+

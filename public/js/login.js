@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
-
 // import "./styles.css";
 
 function App() {
   // React States
-  const [errorMessages, setErrorMessages] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessages, setErrorMessages] = React.useState({});
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
   // User Login info
   const database = [

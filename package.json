@@ -23,6 +23,7 @@
     "firebase": "^9.6.6",
     "node": "^17.4.0",
     "react-router-dom": "^6.2.1",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "three": "^0.138.0"
   }
 }
