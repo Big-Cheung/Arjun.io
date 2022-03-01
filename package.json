@@ -1,30 +1,17 @@
 {
-  "name": "Arjunio",
+  "name": "arjun.io",
   "version": "1.0.0",
-  "description": "wip",
-  "main": "server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Big-Cheung/Arjun.io.git"
+    "start": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Big-Cheung/Arjun.io/issues"
-  },
-  "homepage": "https://github.com/Big-Cheung/Arjun.io#readme",
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "express": "^4.17.2",
-    "firebase": "^9.6.6",
-    "node": "^17.4.0",
-    "react-router-dom": "^6.2.1",
-    "socket.io": "^4.4.1",
-    "three": "^0.138.0"
+    "express": "^4.17.3",
+    "socket.io": "^4.4.1"
   }
 }
