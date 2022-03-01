@@ -1,3 +1,6 @@
+import { initializeApp} from 'firebase/app';
+import { getDatabase } from "firebase/database";
+import 'firebase/auth'
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB1U7iVCc3E--AwAcDv6td2AZaM8YyOxNY",
@@ -10,4 +13,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-module.exports.firebaseConfig = firebaseConfig;
+const fbApp = initializeApp(firebaseConfig)
+const db = getDatabase()
+const auth = app.auth()
+export {db, auth}
+export default fbApp

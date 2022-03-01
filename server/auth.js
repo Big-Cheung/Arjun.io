@@ -1,4 +1,4 @@
-const { getAuth, createUserWithEmailAndPassword } =  require("firebase/auth");
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const authenticate = getAuth();
 createUserWithEmailAndPassword(authenticate, email, password)

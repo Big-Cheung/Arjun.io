@@ -1,7 +1,3 @@
-const  { initializeApp } = require('firebase/app');
-const fb = require('./database/firebase.js');
-const database = require('firebase/database');
-//const auth = require('./public/database/auth.js');
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -9,10 +5,6 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 
 const io = new Server(server);
-//initialize Firebase
-const fbApp = initializeApp(fb.firebaseConfig);
-const db = database.getDatabase(fbApp);
-
 
 
 
