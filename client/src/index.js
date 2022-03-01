@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './styles.css';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <App/>,
+  <Suspense fallback={<div>Loading...</div>}>
+    <App/>
+  </Suspense>,
   document.getElementById('root')
 );
 

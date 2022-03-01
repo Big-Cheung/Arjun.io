@@ -1,6 +1,8 @@
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Billboard, OrbitControls } from '@react-three/drei'
+import React, { useRef, useState} from 'react'
+import { Canvas, useFrame} from '@react-three/fiber'
+import { Billboard, OrbitControls, Text } from '@react-three/drei'
+import { MathUtils } from 'three'
+
 
 function Box(props) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -9,18 +11,26 @@ function Box(props) {
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
   // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => (ref.current.rotation.x += 0.01))
+
+  useFrame((state, delta) => (ref.current.position.x = MathUtils.lerp(ref.current.position.x, clicked ? 10 : -10, 0.1)))
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
     <mesh
       {...props}
       ref={ref}
       scale={clicked ? 1.5 : 1}
-      onClick={(event) => click(!clicked)}
+      onClick={(event) => {
+        click(!clicked);
+        }}
       onPointerOver={(event) => hover(true)}
       onPointerOut={(event) => hover(false)}>
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      <Billboard follow={true} lockX={false} lockY={false} lockZ={false} position={[0, 1.05, 0]}>
+        <Text fontSize={1} outlineWidth={'1%'} outlineColor="#000000" outlineOpacity={1}>
+            {clicked ? "Big" : "Small"}
+        </Text>
+      </Billboard>
     </mesh>
   )
 }
