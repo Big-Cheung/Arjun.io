@@ -15,7 +15,6 @@ var connected = 0;
 
 var players = {};
 
-
 //socket behavior
 io.on('connection', function(socket) {
     //run console log on connect
@@ -23,16 +22,26 @@ io.on('connection', function(socket) {
     //Log connected players
     connected++;
     console.log(connected + " players connected");
+    socket.emit('pl',players)
 
-    //name event
-    socket.on('nameChosen', function(socket, args) {
+    //join event(when player name is chosen)
+    socket.on('j', function(args) {
         players[socket.id] = {};
         players[socket.id]["name"] = args;
+        players[socket.id]["position"] = [0,0,0];
+        players[socket.id]["keys"] = [false,false,false,false];
+        socket.broadcast("j",[players[socket.id],socket.id]);
     })
 
+    socket.on('kc', function(args) {
+        socket.broadcast("kd",[socket.id,args])
+        players[socket.id]["keys"] = args[0]
+        players[socket.id]["position"] = args[1]
+    })
 
     //add event handler to disconnect
     socket.on('disconnect', function() {
+        socket.broadcast("l",socket.id);
         console.log("Player disconnected at ID " + socket.id);
         connected--;
         console.log(connected + " players connected");
