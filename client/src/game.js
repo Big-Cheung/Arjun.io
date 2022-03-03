@@ -21,12 +21,12 @@ socket.on("connect",(e) => {
 })
 
 //motion
-let speed = 5;
+let speed = 7;
 const lerpspeed = 0.2;
 const MAX_X = 15;
 //player loads
 const geometry = new three.BoxGeometry();
-const playerMat = new three.MeshBasicMaterial( { color: 0x0000ff } );
+const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
 const otherMat = new three.MeshBasicMaterial( { color: 0x00aaff } );
 const infectedMat = new three.MeshBasicMaterial( { color: 0xff0000 } );
 
@@ -40,10 +40,9 @@ const keyMap = {
     "t":5
 }
 
-
 class PlayerModel {
-    constructor(name) {
-        this.body = new three.Mesh(geometry, playerMat);
+    constructor(name,material) {
+        this.body = new three.Mesh(geometry, material);
         this.group = new Group();
         this.tag = new Text();
         this.tag.text = name;
@@ -71,7 +70,7 @@ class PlayerModel {
 class OtherPlayer {
     //Constructory/Destructor
     constructor(name,pos=[0,0,0]) {
-        this.obj = new PlayerModel(name);
+        this.obj = new PlayerModel(name,otherMat);
         this.position = new Vector3(...pos);
     }
 
@@ -91,7 +90,7 @@ class Player {
     //Constructor/Destructor
     constructor(name) {
         this.name = name;
-        this.obj = new PlayerModel(this.name);
+        this.obj = new PlayerModel(this.name,playerMat);
         this.position = new Vector3(0,0,0);
 
         
@@ -201,10 +200,13 @@ function createCamera() {
 function createWorld() {
     statics.world = new Group();
     let floorGeo = new three.BoxGeometry();
-    let floorMat = new three.MeshBasicMaterial( { color: 0x333333 } );
-    floorGeo.scale(30,0.2,30);
+    let floorMat = new three.MeshLambertMaterial( { color: 0x333333 } );
+    statics.light = new three.PointLight(0xffffff,4,100);
+    statics.light.position.set(0,40,20);
+    floorGeo.scale(30,100,30);
     statics.floor = new three.Mesh(floorGeo, floorMat);
-    statics.floor.position.y = -1;
+    statics.floor.position.y = -52;
+    statics.world.add(statics.light);
     statics.world.add(statics.floor);
     return statics.world;
 }
@@ -219,15 +221,6 @@ export default function main() {
     createCamera();
   
     statics.scene.add(createWorld());
-    /*const controls = new OrbitControls( statics.camera, renderer.domElement );
-    controls.minDistance = 5;
-    controls.maxDistance = 5;
-    controls.maxPolarAngle = 0.3;
-    controls.minPolarAngle = 0.3;*/
-
-    let body = new three.Mesh(geometry, otherMat);
-    body.position.x = 2
-    statics.scene.add(body);
 
     //controls.update();
     function animate() {
@@ -239,7 +232,7 @@ export default function main() {
             others[other].update();
         }
         speed += (keys[4] - keys[5])*0.1;
-        statics.camera.lookAt( player.position )
+        statics.camera.lookAt( player.obj.group.position )
         //controls.update();
         statics.renderer.render( statics.scene, statics.camera );
     }

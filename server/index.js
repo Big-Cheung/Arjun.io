@@ -15,8 +15,12 @@ const io = new Server(server,{cors: {
 const delay = 10;
 const dt = delay * 0.001;
 var connected = 0;
+var state = 0;
+var game = 0;
 
 var players = {};
+var lobby = {};
+
 
 function updatePlayer(){
     for (var e in players) {
@@ -28,10 +32,7 @@ function updatePlayer(){
     io.emit("u",players);
 }
 
-//socket behavior
-timerID = setInterval(updatePlayer,delay);
-io.on('connection', function(socket) {
-    let timerID;
+function initSockets(socket) {
     //run console log on connect
     console.log("Player connected at ID " + socket.id);
     //Log connected players
@@ -50,7 +51,6 @@ io.on('connection', function(socket) {
 
     //update event
     socket.on('kc', function(args) {
-        console.log("Keyupdate from " + socket.id);
         if (socket.id in players) {
             players[socket.id]["keys"] = args
         }
@@ -67,6 +67,12 @@ io.on('connection', function(socket) {
             delete players[socket.id];
         }
     });
+}
+
+//socket behavior
+timerID = setInterval(updatePlayer,delay);
+io.on('connection', function(socket) {
+    initSockets(socket);
 });
 
 //API response
