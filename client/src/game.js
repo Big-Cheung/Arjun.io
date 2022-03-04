@@ -4,7 +4,8 @@ import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
 
 //game globals
-let states = {}
+let state = 0;
+let game = 0;
 let statics = {}
 let others = {}
 let player;
@@ -20,6 +21,9 @@ socket.on("connect",(e) => {
     initSockets();
 })
 
+
+//cameraobj
+var targetObj = new Vector3(0,0,5);
 //motion
 let speed = 7;
 const lerpspeed = 0.2;
@@ -91,7 +95,10 @@ class Player {
     constructor(name) {
         this.name = name;
         this.obj = new PlayerModel(this.name,playerMat);
-        this.position = new Vector3(0,0,0);
+        this.position = new Vector3(0,0,4);
+        targetObj = this.obj.group.position;
+        statics.camera.zoom = 2;
+        statics.camera.updateProjectionMatrix();
 
         
         document.addEventListener("keydown", this.keyDown)
@@ -141,18 +148,28 @@ class Player {
 
 
 function initSockets() {
-    let name = prompt("Name?") || "LOSER";
-    player = new Player(name);
-    statics.scene.add( player.obj.group );
-    socket.emit("j",name);
-
     window.addEventListener("beforeunload",socket.disconnect);
+    if (prompt() == "Word") {
+        player = new Player("Guest");
+        statics.scene.add( player.obj.group );
+        socket.emit("j","Guest");
+    }
     //Player list
     socket.on("pl",(e) => {
-        console.log("Server Join")
         for (var el in e) {
             others[el] = new OtherPlayer(e[el]["name"],e[el]["position"]);
             statics.scene.add(others[el].obj.group);
+        }
+    })
+
+    //Game info
+    socket.on("gi", (e) => {
+        state = e[0];
+        game = e[1];
+        if (state == 0) {
+            player = new Player("Guest");
+            statics.scene.add( player.obj.group );
+            socket.emit("j","Guest");
         }
     })
 
@@ -188,14 +205,11 @@ function initSockets() {
 
 function createCamera() {
     statics.camera = new three.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    statics.camera.position.z = 20;
+    statics.camera.position.z = 25;
     statics.camera.position.y = 20;
-    statics.camera.zoom = 2;
-    statics.camera.updateProjectionMatrix();
     statics.cameraGroup = new Group();
     statics.cameraGroup.add(statics.camera);
 }
-
 
 function createWorld() {
     statics.world = new Group();
@@ -232,7 +246,7 @@ export default function main() {
             others[other].update();
         }
         speed += (keys[4] - keys[5])*0.1;
-        statics.camera.lookAt( player.obj.group.position )
+        statics.camera.lookAt( targetObj )
         //controls.update();
         statics.renderer.render( statics.scene, statics.camera );
     }
