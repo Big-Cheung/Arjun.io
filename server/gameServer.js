@@ -10,6 +10,12 @@ var loopTimer;
 const delay = 10;
 const dt = delay * 0.001;
 
+const MIN_X = -15
+const MAX_X = 15
+const MIN_Z = -15
+const MAX_Z = 15
+
+
 
 const stateMap = [
 //State 0
@@ -36,8 +42,12 @@ const stateMap = [
             for (var e in players) {
                 e = players[e];
                 const normal = (e.keys[0] + e.keys[1] + e.keys[2] + e.keys[3]) > 1 ? 0.707 : 1;
+                
+                e.position[2] = bound(e.position[2], MIN_Z, MAX_Z);
+                e.position[0] = bound(e.position[0], MIN_X, MAX_X);
                 e.position[2] += dt * 5 * (e.keys[2] - e.keys[0]) * normal;
                 e.position[0] += dt * 5 * (e.keys[3] - e.keys[1]) * normal;
+                
             }
             io.emit("u",players);
         }
@@ -88,6 +98,9 @@ function doesCollide(radius, vector1, vector2) {
     return r2 >= (x*x + y*y + z*z);
 }
 
+function bound(value, min, max) {
+    return Math.min(Math.max(min,value),max);
+}
 
 function nextState() {
     switch(state){

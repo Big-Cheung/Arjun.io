@@ -27,7 +27,10 @@ var targetObj = new Vector3(0,0,5);
 //motion
 let speed = 7;
 const lerpspeed = 0.2;
-const MAX_X = 15;
+const MIN_X = -15
+const MAX_X = 15
+const MIN_Z = -15
+const MAX_Z = 15
 //player loads
 const geometry = new three.BoxGeometry();
 const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
@@ -115,8 +118,11 @@ class Player {
     //Methods
     update() {
         const normal = (keys[0] + keys[1] + keys[2] + keys[3]) > 1 ? 0.707 : 1
+        this.position.z = bound(this.position.z, MIN_Z, MAX_Z);
+        this.position.x = bound(this.position.x, MIN_X, MAX_X);
         this.position.z += 0.01 * speed * (keys[2] - keys[0]) * normal
         this.position.x += 0.01 * speed * (keys[3] - keys[1]) * normal
+
         this.obj.group.position.lerp(this.position,lerpspeed);
         this.obj.update();
     }
@@ -203,10 +209,16 @@ function initSockets() {
     })
 }
 
+function bound(value, min, max) {
+    return Math.min(Math.max(min,value),max);
+}
+
 function createCamera() {
     statics.camera = new three.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     statics.camera.position.z = 25;
-    statics.camera.position.y = 20;
+    statics.camera.position.y = 5;
+    statics.camera.zoom = 1.3;
+    statics.camera.updateProjectionMatrix();
     statics.cameraGroup = new Group();
     statics.cameraGroup.add(statics.camera);
 }

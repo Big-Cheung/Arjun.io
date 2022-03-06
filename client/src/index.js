@@ -11,6 +11,7 @@ ReactDOM.render(
     <App/>
   </Suspense>,
   document.getElementById('root')
+
 );
 game();
 
