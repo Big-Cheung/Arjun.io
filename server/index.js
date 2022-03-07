@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const cors = require('cors');
 const { Server } = require("socket.io");
 const { setIO, initSocket, startGameLoop } = require("./gameServer");
 
@@ -25,8 +26,12 @@ io.on('connection', function(socket) {
 app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
-
-
+app.use(cors());
+app.use("/login", (req, res) => {
+    res.send({
+        token: 'test123',
+      });
+});
 app.get("/", (req, res) => {
     res.send("This is some text!").status(200);
 });
