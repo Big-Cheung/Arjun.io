@@ -10,6 +10,9 @@ var loopTimer;
 const delay = 10;
 const dt = delay * 0.001;
 
+const gameDuration = 20 * 1000; //Seconds * 1000
+const lobbyDuration = 5 * 1000; //Seconds * 1000
+
 const MIN_X = -15
 const MAX_X = 15
 const MIN_Z = -15
@@ -20,11 +23,15 @@ const MAX_Z = 15
 const stateMap = [
 //State 0
     {   
+        'connect':(socket) => {
+            socket.emit("gj");
+        },
         'join':(socket,args) => {
             players[socket.id] = {};
             players[socket.id]["name"] = args;
             players[socket.id]["position"] = [0,0,0];
             players[socket.id]["keys"] = [false,false,false,false];
+
             socket.broadcast.emit("j",[socket.id,args]);
         },
         'keychange':(socket,args) => {
@@ -50,16 +57,25 @@ const stateMap = [
                 
             }
             io.emit("u",players);
-        }
+        },
+        'start':()=>{
+            for (var socket in lobby){
+                io.to(socket).emit("gj");
+                delete lobby[socket]
+            }
+        },
+        'end':()=>{
+
+        },
     },
 
 //State 1
     {
+        'connect':(socket) => {
+            lobby[socket.id] = true;
+        },
         'join':(socket,args = undefined) => {
-            lobby[socket.id] = {};
-            lobby[socket.id]["name"] = args;
-            lobby[socket.id]["position"] = [0,0,0];
-            lobby[socket.id]["keys"] = [false,false,false,false];
+            
         },
         'keychange':(socket,args = undefined) => {
             if (socket.id in players) {
@@ -76,15 +92,24 @@ const stateMap = [
             }
         },
         'update':()=> {
-            let v = Object.keys(players);
             for (var e in players) {
                 e = players[e];
                 const normal = (e.keys[0] + e.keys[1] + e.keys[2] + e.keys[3]) > 1 ? 0.707 : 1;
+                
+                e.position[2] = bound(e.position[2], MIN_Z, MAX_Z);
+                e.position[0] = bound(e.position[0], MIN_X, MAX_X);
                 e.position[2] += dt * 5 * (e.keys[2] - e.keys[0]) * normal;
                 e.position[0] += dt * 5 * (e.keys[3] - e.keys[1]) * normal;
+                
             }
             io.emit("u",players);
-        }
+        },
+        'start':()=>{
+
+        },
+        'end':()=>{
+
+        },
     }
 ]
 
@@ -119,13 +144,43 @@ function setIO(newIO) {
     io = newIO;
 }
 
+function gameLoop() {
+    stateMap[state].update();
+}
+
+function stateSwitchLoop() {
+    if (state != 2) {
+        console.log("Lobby started");
+        stateMap[state].end()
+        state = 0;
+        stateMap[state].start()
+        io.emit("gi",[state,game])
+        setTimeout(()=> {
+            if (state !=2) {
+                console.log("Game Started");
+                stateMap[state].end()
+                state = 1;
+                stateMap[state].start()
+                io.emit("gi",[state,game])
+                setTimeout(stateSwitchLoop,gameDuration)
+            } else {
+                state = 0;
+            }
+        }, lobbyDuration)
+    } else {
+        state = 0;
+    }
+}
+
 function startGameLoop() {
-    loopTimer = setInterval(stateMap[state].update,delay);
+    gameLoopTimer = setInterval(gameLoop,delay);
+    stateLoopTimer = stateSwitchLoop()
 }
 
 function initSocket(socket) {
     //run console log on connect
     socket.emit('pl',players)
+    stateMap[state]['connect'](socket);
 
     //join event
     socket.on('j', function(args) {
