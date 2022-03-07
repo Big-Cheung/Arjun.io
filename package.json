@@ -11,8 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3",
     "firebase": "^9.6.7",
+    "react-router-dom": "^6.2.2",
     "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3"
   }
 }

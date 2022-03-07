@@ -27,11 +27,14 @@ var targetObj = new Vector3(0,0,5);
 //motion
 let speed = 7;
 const lerpspeed = 0.2;
-const MAX_X = 15;
+const MIN_X = -15
+const MAX_X = 15
+const MIN_Z = -15
+const MAX_Z = 15
 //player loads
 const geometry = new three.BoxGeometry();
 const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
-const otherMat = new three.MeshBasicMaterial( { color: 0x00aaff } );
+const otherMat = new three.MeshLambertMaterial( { color: 0x1166ff } );
 const infectedMat = new three.MeshBasicMaterial( { color: 0xff0000 } );
 
 //utils
@@ -115,8 +118,11 @@ class Player {
     //Methods
     update() {
         const normal = (keys[0] + keys[1] + keys[2] + keys[3]) > 1 ? 0.707 : 1
+        this.position.z = bound(this.position.z, MIN_Z, MAX_Z);
+        this.position.x = bound(this.position.x, MIN_X, MAX_X);
         this.position.z += 0.01 * speed * (keys[2] - keys[0]) * normal
         this.position.x += 0.01 * speed * (keys[3] - keys[1]) * normal
+
         this.obj.group.position.lerp(this.position,lerpspeed);
         this.obj.update();
     }
@@ -149,11 +155,7 @@ class Player {
 
 function initSockets() {
     window.addEventListener("beforeunload",socket.disconnect);
-    if (prompt() == "Word") {
-        player = new Player("Guest");
-        statics.scene.add( player.obj.group );
-        socket.emit("j","Guest");
-    }
+
     //Player list
     socket.on("pl",(e) => {
         for (var el in e) {
@@ -162,14 +164,19 @@ function initSockets() {
         }
     })
 
-    //Game info
+    //Game join
+    socket.on("gj", (e) => {
+        player = new Player("Guest");
+        statics.scene.add( player.obj.group );
+        socket.emit("j","Guest");
+    })
+
+    //Game state updated
     socket.on("gi", (e) => {
-        state = e[0];
-        game = e[1];
-        if (state == 0) {
-            player = new Player("Guest");
-            statics.scene.add( player.obj.group );
-            socket.emit("j","Guest");
+        if (player) {
+            targetObj = player.obj.group.position
+        } else {
+            targetObj = new Vector3(0,0,5);
         }
     })
 
@@ -203,10 +210,16 @@ function initSockets() {
     })
 }
 
+function bound(value, min, max) {
+    return Math.min(Math.max(min,value),max);
+}
+
 function createCamera() {
     statics.camera = new three.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     statics.camera.position.z = 25;
     statics.camera.position.y = 20;
+    statics.camera.zoom = 1.3;
+    statics.camera.updateProjectionMatrix();
     statics.cameraGroup = new Group();
     statics.cameraGroup.add(statics.camera);
 }
@@ -217,9 +230,9 @@ function createWorld() {
     let floorMat = new three.MeshLambertMaterial( { color: 0x333333 } );
     statics.light = new three.PointLight(0xffffff,4,100);
     statics.light.position.set(0,40,20);
-    floorGeo.scale(30,100,30);
+    floorGeo.scale(31,99,31);
     statics.floor = new three.Mesh(floorGeo, floorMat);
-    statics.floor.position.y = -52;
+    statics.floor.position.y = -50;
     statics.world.add(statics.light);
     statics.world.add(statics.floor);
     return statics.world;

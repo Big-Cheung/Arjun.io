@@ -11,6 +11,7 @@ ReactDOM.render(
     <Leaderboard/>
   </Suspense>,
   document.getElementById('root')
+
 );
 game();
 
