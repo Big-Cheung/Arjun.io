@@ -11,9 +11,9 @@ const Pagination = ({ usersPerPage, totalUsers, paginate}) => {
       <div className="pagination" style={paginateStyle.container}>
         {pageNumbers.map(number => (
           <div key={number} className="page-item" style={paginateStyle.pages}>
-            <div onClick={() => paginate(number)} className='page-link'>
+            <button onClick={() => paginate(number)} className='page-link'>
               {number}
-            </div>       
+            </button>       
           </div>
         ))}
       </div>

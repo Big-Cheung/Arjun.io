@@ -2,7 +2,7 @@ import React from 'react';
 import Pagination from './Pagination';
 
 // testdata to be removed later
-const testdata = [
+const origdata = [
   {username: 'name1', score: 10},
   {username: 'name2', score: 20},
   {username: 'name3', score: 30},
@@ -25,6 +25,11 @@ const testdata = [
   {username: 'name20', score: 200},
 ];
 
+const testdata = origdata.sort((a, b) => b.score - a.score).map((item, i) => {
+    item.rank = i + 1;
+    return item;
+});
+
 export default function Leaderboard() {
   
   // Leaderboard Button
@@ -33,17 +38,35 @@ export default function Leaderboard() {
   // Process Data
   let sorted = testdata.sort((a, b) => b.score - a.score);
   let userlist = sorted.map((user, i) =>
-  <User username={user.username} rank={i + 1} score={user.score} />
+  <User username={user.username} rank={user.rank} score={user.score} />
   );
-  
-  // Pagination
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [usersPerPage] = React.useState(10);
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = userlist.slice(indexOfFirstUser, indexOfLastUser);
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const [indexOfLastUser, setLastIdx] = React.useState(0);
+  const [indexOfFirstUser, setFirstIdx] = React.useState(10);  // Search
+  const [searchlist, setSearchList] = React.useState(userlist);
+  let page_number = 0;
+  const searchData = (query) => {
+    if (query !== undefined) {
+      setSearchList(testdata
+        .filter(user => user.username.toLowerCase().includes(query.toLowerCase()))
+        .map((user, i) =>
+        <User username={user.username} rank={user.rank} score={user.score} />));
+    } else setSearchList(testdata)
+  }
 
+  const sliceSearchList = (a, b, c) => {
+      if (b < a.length)
+        return a.slice(b, c);
+      else
+        return a
+  }
+
+  // Pagination
+  const usersPerPage = 10;
+  const paginate = (pageNumber) => {
+    setLastIdx((pageNumber -1 ) * usersPerPage);
+    setFirstIdx(((pageNumber -1 ) * usersPerPage) + usersPerPage);
+  }
+  
   return (
     <React.Fragment>
       <div className="minimized-container" style={minimizedStyle.container}>
@@ -53,9 +76,10 @@ export default function Leaderboard() {
       {open && (
         <div className="expanded-container" style={expandedStyle.container}>
           <div className="expanded-header" style={expandedStyle.header}>Leaderboard</div>
+          <input type="text" placeholder="Search..." onChange={event => {searchData(event.target.value)}}/>
           <ColumnHeader/>
-          {currentUsers}
-          <Pagination usersPerPage={usersPerPage} totalUsers={userlist.length} paginate={paginate}/>
+          {sliceSearchList(searchlist, indexOfLastUser, indexOfFirstUser)}
+          <Pagination usersPerPage={usersPerPage} totalUsers={searchlist.length} paginate={paginate}/>
         </div>
       )}
     </React.Fragment>   
