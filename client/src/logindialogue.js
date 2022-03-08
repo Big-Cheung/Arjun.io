@@ -6,10 +6,23 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-  
+
+
+async function loginUser(creds) {
+  return fetch('http://localhost:3001/login', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(creds)
+  })
+  .then(data =>data.json)
+}
 const LoginDialog = () => {
   const [open, setOpen] = React.useState(false);
-  
+  const [token, setToken] = React.useState();
+  const [username, setUser] = React.useState();
+  const [password, setPassword] = React.useState();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -18,6 +31,18 @@ const LoginDialog = () => {
     setOpen(false);
   };
   
+  const handleSubmit = async e =>{
+    e.preventDefault();
+    const token = await loginUser({
+        username,
+        password
+    });
+    setToken(token);
+    console.log(token);
+    console.log ('logged in');
+    handleClose();
+}
+
   return (
     <div>
       <Button variant="outlined" 
@@ -40,6 +65,9 @@ const LoginDialog = () => {
             type="username"
             fullWidth
             variant="standard"
+            onChange={(e) => {
+              setUser(e.target.value);
+            }}
           />
           <TextField
             autoFocus
@@ -49,6 +77,9 @@ const LoginDialog = () => {
             type="password"
             fullWidth
             variant="standard"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
           
         </DialogContent>
@@ -56,7 +87,7 @@ const LoginDialog = () => {
           <Button onClick={handleClose} color="primary">
            Close
           </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
+          <Button onClick={handleSubmit} color="primary" autoFocus>
            Login
           </Button>
         </DialogActions>
@@ -64,5 +95,6 @@ const LoginDialog = () => {
     </div>
   );
 }
-  
+
+
 export default LoginDialog;

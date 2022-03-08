@@ -4,9 +4,9 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom';
 import { BooleanKeyframeTrack } from 'three';
-import { FaHeart } from "react-icons/fa";
-import LoginIcon from '@material-ui/icons/AccountCircle';
-import { MDBIcon } from "mdbreact";
+//import { FaHeart } from "react-icons/fa";
+//import LoginIcon from '@material-ui/icons/AccountCircle';
+//import { MDBIcon } from "mdbreact";
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -223,10 +223,7 @@ class Login extends React.Component {
     if(index == 2){
       this.setState({SignUpDialog: true, LoginDialog: false})
     }
-
-    
   }
-  
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     const LoginDialog = this.state.LoginDialog;
