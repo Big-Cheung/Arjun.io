@@ -1,7 +1,27 @@
 
 // const [errorMessages, setErrorMessages] = React.useState({});
 //   const [isSubmitted, setIsSubmitted] = React.useState(false);
+import * as React from 'react'
+import ReactDOM from 'react-dom';
+import { BooleanKeyframeTrack } from 'three';
+import { FaHeart } from "react-icons/fa";
+import LoginIcon from '@material-ui/icons/AccountCircle';
+import { MDBIcon } from "mdbreact";
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+
+import LoginDialogue from './logindialogue.js'
+import SignUpDialogue from './signupdialogue.js'
+// import { Dialog } from '@mui/material'
+//import Stack from '@mui/material/Stack';
 function App() {
+  const [open, setOpen] = React.useState(false);
+  
+  
   // React States
   const [errorMessages, setErrorMessages] = React.useState({});
   const [isSubmitted, setIsSubmitted] = React.useState(false);
@@ -45,6 +65,7 @@ function App() {
       setErrorMessages({ name: "uname", message: errors.uname });
     }
   };
+  
 
   // Generate JSX code for error message
   const renderErrorMessage = (name) =>
@@ -54,9 +75,9 @@ function App() {
 
   // JSX code for login form
   const renderForm = (
-    
+
     <div className="form">
-    <script src="../styles.css" type="text/babel"></script>
+      <script src="../styles.css" type="text/babel"></script>
       <form onSubmit={handleSubmit} class="form" id="login">
         <div className="input-container">
           <label>Username </label>
@@ -93,7 +114,7 @@ const handleSubmit = (event) => {
   var { uname, pass } = document.forms[0];
 
   // Find user login info
-  
+
 };
 const mystyle = {
   color: "white",
@@ -126,45 +147,199 @@ const cardStyles = {
     fontWeight: "bold",
   },
   button: {
-    marginLeft: 10,
-    backgroundColor: "blue",
+    backgroundColor: "black",
     color: "white",
-    height: 20,
-    width: 60,
-    fontWeight: "bold",
+    padding: "10px 60px",
+    borderRadius: "5px",
+    justifyContent: 'space-between'
   },
   userName: {
     fontWeight: "bold",
   },
 };
+// const renderForm = (
+//   // <div className="form">
+//   // <script src="../styles.css" type="text/babel"></script>
+//   //   <form onSubmit={handleSubmit} style={cardStyles.container}>
+//   //     <div className="input-container" style={cardStyles.field} >
+//   //       <label>Username </label>
+//   //       <input type="text" name="uname" />
 
-const renderForm = (
-  <div className="form">
-  <script src="../styles.css" type="text/babel"></script>
-    <form onSubmit={handleSubmit} style={cardStyles.container}>
-      <div className="input-container" style={cardStyles.field} >
-        <label>Username </label>
-        <input type="text" name="uname" />
-        
-      </div>
-      <div className="input-container" style={cardStyles.field}>
-        <label>Password </label>
-        <input type="password" name="pass" />
-        
-      </div>
-      <div className="btn btn-primary">
-        <input type="submit" style={cardStyles.button}/>
-      </div>
-    </form>
+//   //     </div>
+//   //     <div className="input-container" style={cardStyles.field}>
+//   //       <label>Password </label>
+//   //       <input type="password" name="pass" />
+
+//   //     </div>
+//   //     <div className="btn btn-primary">
+//   //       <input type="submit" style={cardStyles.button}/>
+//   //     </div>
+//   //   </form>
+
+//   // </div>
+//   <div className="form">
+//     <script src="../styles.css" type="text/babel"></script>
+//     <div onClick={() => this.handleClick()} className='Profile'>
+//       <button class="dropbtn">Dropdown</button>
+//     </div>
+//     <div className="drop1">
+//       <button>Sign In</button>
+//       <button>Log In</button>
+//     </div>
+
+//   </div>
+// );
+class Login extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
+    this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    this.state = {isLoggedIn: false, LoginDialog: false, SignUpDialog: false};
+  }
+  handleLoginClick() {
+    if(this.isLoggedIn)
+      this.setState({isLoggedIn: false});
+    else
+      this.setState({isLoggedIn: true});
+  }
+
+  handleLogoutClick() {
+    this.setState({isLoggedIn: false});
+  }
+
+  handleClick = (index) => {
+    console.log("button clicked" + index);
+    if(this.isLoggedIn == true){
+      this.setState({isLoggedIn: false});
+
+    }
+    else if (this.isLoggedIn == false || this.isLoggedIn == undefined){
+      this.setState({isLoggedIn: true});
+    }
+    if(index == 1){
+      this.setState({LoginDialog: true})
+    }
+    if(index == 2){
+      this.setState({SignUpDialog: true, LoginDialog: false})
+    }
+
+    
+  }
+  
+  render() {
+    const isLoggedIn = this.state.isLoggedIn;
+    const LoginDialog = this.state.LoginDialog;
+    const SignUpDialog = this.state.SignUpDialog;
+    let button;
+    return (
+      <div className="form">
+    <script src="../styles.css" type="text/babel"></script>
+    
+    <Button variant="outlined" 
+              color="secondary" onClick={() => this.handleClick(0)}>
+        Guest
+      </Button>
+    <div className="drop1">
+      {isLoggedIn ? <div> 
+      <LoginDialogue /> 
+      <SignUpDialogue /> </div>
+      : <div><span></span></div>}
+      
+    </div>
+    <div>
+      
+    </div>
+    {/* <div>
+      <Button variant="outlined" 
+              color="primary" onClick={handleClickOpen}>
+        Open My Custom Dialog
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>
+           Greetings from GeeksforGeeks
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Do you do coding ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+           Close
+          </Button>
+          <Button onClick={handleClose} color="primary" autoFocus>
+           Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div> */}
+    {/* <Button startIcon={<LoginIcon />} color="primary" variant="contained">
+  Login
+</Button> */}
+    
 
   </div>
-);
-
-class Login extends React.Component{
-  render(){
-    return renderForm
+  
+    );
+    
   }
+  
+  // render() {
+  //     return (
+  //       <div>
+  //       <select>
+  //         <option value="fruit">Sign In</option>
+  //         <option value="vegetable">Log In</option>
+  //       </select>
+  //     </div>
+  //     );
+  // }
+}
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+function LoginButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Login
+    </button>
+  );
+}
+
+function LogoutButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Logout
+    </button>
+  );
 }
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<Login />, rootElement);
+export default Login;
+
+
+{/* <div><div onClick={() => this.handleClick(1)}>
+      <button className="dropbtn" style={cardStyles.button} isLoggedIn={isLoggedIn}>
+      
+      <a>Log in</a>
+      </button></div>
+      <div onClick={() => this.handleClick(2)} >
+      <button className="dropbtn" style={cardStyles.button} isLoggedIn={isLoggedIn}>
+      
+      <a>Sign Up</a>
+      </button></div> </div>  */}
