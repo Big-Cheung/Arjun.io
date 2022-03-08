@@ -24,13 +24,15 @@ const stateMap = [
 //State 0
     {   
         'connect':(socket) => {
-            socket.emit("gj");
+            io.to(socket).emit("gj");
         },
         'join':(socket,args) => {
             players[socket.id] = {};
             players[socket.id]["name"] = args;
             players[socket.id]["position"] = [0,0,0];
             players[socket.id]["keys"] = [false,false,false,false];
+            players[socket.id]["score"] = 0;
+            players[socket.id]["team"] = 0;
 
             socket.broadcast.emit("j",[socket.id,args]);
         },
@@ -69,7 +71,7 @@ const stateMap = [
         },
     },
 
-//State 1
+//State 1 Game
     {
         'connect':(socket) => {
             lobby[socket.id] = true;
@@ -92,17 +94,15 @@ const stateMap = [
             }
         },
         'update':()=> {
-            for (var e in players) {
-                e = players[e];
-                const normal = (e.keys[0] + e.keys[1] + e.keys[2] + e.keys[3]) > 1 ? 0.707 : 1;
-                
-                e.position[2] = bound(e.position[2], MIN_Z, MAX_Z);
-                e.position[0] = bound(e.position[0], MIN_X, MAX_X);
-                e.position[2] += dt * 5 * (e.keys[2] - e.keys[0]) * normal;
-                e.position[0] += dt * 5 * (e.keys[3] - e.keys[1]) * normal;
-                
+            switch(game){
+                case 0:
+                    game1();
+                    break;
+                case 1:
+                    game2();
+                    break;
             }
-            io.emit("u",players);
+                
         },
         'start':()=>{
 
@@ -113,6 +113,24 @@ const stateMap = [
     }
 ]
 
+
+function game1() {
+    for (var e in players) {
+        e = players[e];
+        const normal = (e.keys[0] + e.keys[1] + e.keys[2] + e.keys[3]) > 1 ? 0.707 : 1;
+        
+        e.position[2] = bound(e.position[2], MIN_Z, MAX_Z);
+        e.position[0] = bound(e.position[0], MIN_X, MAX_X);
+        e.position[2] += dt * 5 * (e.keys[2] - e.keys[0]) * normal;
+        e.position[0] += dt * 5 * (e.keys[3] - e.keys[1]) * normal;
+        
+    }
+    io.emit("u",players);
+}
+
+function game2() {
+
+}
 function doesCollide(radius, vector1, vector2) {
     //using cylindrical hitbox, check if they are faster
     //using r^2 is much faster than dividing most likely
@@ -126,19 +144,6 @@ function doesCollide(radius, vector1, vector2) {
 function bound(value, min, max) {
     return Math.min(Math.max(min,value),max);
 }
-
-function nextState() {
-    switch(state){
-        case 0: 
-            for (key in players) {
-
-            }
-            break;
-        case 1:
-            break;
-    }
-}
-
 
 function setIO(newIO) {
     io = newIO;

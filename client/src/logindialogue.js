@@ -16,13 +16,17 @@ async function loginUser(creds) {
       },
       body: JSON.stringify(creds)
   })
-  .then(data =>data.json)
+  .then((res) => {
+    return res.json()
+  }).then(data => {
+    return data;
+  })
 }
+
 const LoginDialog = () => {
   const [open, setOpen] = React.useState(false);
-  const [token, setToken] = React.useState();
-  const [username, setUser] = React.useState();
-  const [password, setPassword] = React.useState();
+  const [username, setUser] = React.useState("");
+  const [password, setPassword] = React.useState("n");
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -33,13 +37,25 @@ const LoginDialog = () => {
   
   const handleSubmit = async e =>{
     e.preventDefault();
-    const token = await loginUser({
+
+    if (password == "" || username == "") {
+      return;
+    }
+    
+    const data = await loginUser([
         username,
         password
-    });
-    setToken(token);
-    console.log(token);
-    console.log ('logged in');
+    ]);
+    //If this is the case, login failed
+    //We can probably improve this code with more data
+    //but for now, lets just get this thing logged in
+    console.log(data)
+    if (data.status == "failed") {
+      //handle failed login response
+      console.log(data.msg);
+      return;
+    }
+    console.log(data.user);
     handleClose();
 }
 
