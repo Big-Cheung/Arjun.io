@@ -1,27 +1,32 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
-
-async function loginUser(creds) {
-    return fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(creds)
-    })
-    .then(data =>data.json)
-}
-export default function Login({setToken}) {
+import Cookies from 'js-cookie'
+import {auth} from './firebase'
+import {setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signOut} from 'firebase/auth';
+export default function Login() {
   const [username, setUser] = useState();
   const [password, setPassword] = useState();
   const handleSubmit = async e =>{
       e.preventDefault();
-      const token = await loginUser({
-          username,
-          password
-      });
-      setToken(token);
-      console.log(token)
+      setPersistence(auth, browserSessionPersistence);
+      signInWithEmailAndPassword(auth, username, password)
+      .then(({user}) => {
+        return user.getIdToken().then((idToken)=>{
+          return fetch('http://localhost:3001/sessionLogin', {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'CSRF-Token': Cookies.get("XSRF-TOKEN"),
+             Origin: 'http://localhost:3000',
+           },
+           body: JSON.stringify({idToken}),
+         });
+        });
+      })
+      .then(()=>{
+        return signOut(auth);
+      })
+      return false;
   }
   return(
     <div className = "login-wrapper">
@@ -46,8 +51,4 @@ export default function Login({setToken}) {
     </form>
     </div>
   )
-}
-
-Login.propTypes = {
-    setToken:PropTypes.func.isRequired
 }

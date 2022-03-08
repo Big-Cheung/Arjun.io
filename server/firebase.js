@@ -1,6 +1,9 @@
 import { initializeApp} from 'firebase/app';
 import { getDatabase } from "firebase/database";
-import 'firebase/auth'
+import 'firebase/auth';
+const admin = require("firebase-admin");
+//admin config
+const serviceAccount = require("./serviceAccountKey.json")
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB1U7iVCc3E--AwAcDv6td2AZaM8YyOxNY",
@@ -14,8 +17,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const fbApp = initializeApp(firebaseConfig)
+const fbAdmin = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://arjunio-default-rtdb.firebaseio.com"
+});
 const db = getDatabase()
 const auth = app.auth()
 auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-export {db, auth}
+export {db, auth, fbAdmin}
 export default fbApp

@@ -3,20 +3,21 @@ const csrf = require("csurf");
 const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
+const admin = require('firebase-admin');
 const cors = require('cors');
-
-const csrfMidware = csrf({cookie: true});
+const serviceAccount = require("./serviceAccountKey.json")
 const { Server } = require("socket.io");
 const { setIO, initSocket, startGameLoop } = require("./gameServer");
+const csrfMiddleware = csrf({cookie: true});
 
 const PORT = 3001;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server,{cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    credentials: true,
   }});
-
 
 //socket behavior
 setIO(io);
@@ -28,11 +29,13 @@ io.on('connection', function(socket) {
 //authentication stuff
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(csrfMidware);
-app.use(cors());
-
+app.use(csrfMiddleware);
+app.use(cors({
+    origin: 'http://localhost:3000'
+  }));
 app.all("*", (req, res, next) =>{
-    res.cookie("XSRF-TOKEN", req.csrfToken());
+    res.cookie("XSRF-TOKEN", token = req.csrfToken());
+    console.log(token);
     next();
 });
 //API response
@@ -47,7 +50,28 @@ app.use("/login", (req, res) => {
 app.get("/", (req, res) => {
     res.send("This is some text!").status(200);
 });
-
+//postHandler for Cookie
+app.post("/sessionLogin", (req,res) => {
+    const idToken = req.body.idToken.toString();
+    //expires in 5 days
+    const expiresIn = 60 * 60 * 24 * 5 *1000; 
+    admin
+        .auth()
+        .createSessionCookie(idToken,{expiresIn})
+        .then(
+            (sessionCookie) => {
+            const options = {maxAge: expiresIn, httpOnly: true};
+            res.cookie("sessionID", sessionCookie, options);
+            res.end(JSON.stringify({status: "success"}));
+        },
+        (error) => {
+            res.status(401).send("UNAUTHORIZED REQUEST");
+        }
+        );
+})
+app.get("/sessionLogout", (req,res) =>{
+    res.clearCookie("sessionID");
+});
 //Finalize Express
 server.listen(PORT, function() {
     console.log(`Listening on ${server.address().port}`);
