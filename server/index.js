@@ -1,11 +1,15 @@
+const cookieParser = require("cookie-parser");
+const csrf = require("csurf");
+const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
 const cors = require('cors');
+
+const csrfMidware = csrf({cookie: true});
 const { Server } = require("socket.io");
 const { setIO, initSocket, startGameLoop } = require("./gameServer");
 
 const PORT = 3001;
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server,{cors: {
@@ -21,12 +25,20 @@ startGameLoop();
 io.on('connection', function(socket) {
     initSocket(socket);
 });
+//authentication stuff
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(csrfMidware);
+app.use(cors());
 
+app.all("*", (req, res, next) =>{
+    res.cookie("XSRF-TOKEN", req.csrfToken());
+    next();
+});
 //API response
 app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
-app.use(cors());
 app.use("/login", (req, res) => {
     res.send({
         token: 'test123',

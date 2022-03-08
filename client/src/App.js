@@ -8,15 +8,8 @@ export default function GameView() {
     return <Login setToken = {setToken}/>
   }
   return (
-    <div className="wrapper">
-    <h1>Application</h1>
-    <BrowserRouter>
-      <Routes>
-        <Route path="./testProfile.js">
-          <Profile />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </div>
+    <div style={{color:"red"}}>
+    This is a test!
+    </div>
   ) 
 }

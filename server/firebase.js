@@ -16,5 +16,6 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig)
 const db = getDatabase()
 const auth = app.auth()
+auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
 export {db, auth}
 export default fbApp
