@@ -4,12 +4,20 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
 const admin = require('firebase-admin');
-const cors = require('cors');
 const serviceAccount = require("./serviceAccountKey.json")
 const { Server } = require("socket.io");
 const { setIO, initSocket, startGameLoop } = require("./gameServer");
+const cors = require('cors');
+const corsOptions ={
+    origin:'*', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200,
+}
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://arjunio-default-rtdb.firebaseio.com"
+});
 const csrfMiddleware = csrf({cookie: true});
-
 const PORT = 3001;
 const app = express();
 const server = http.createServer(app);
@@ -17,7 +25,7 @@ const io = new Server(server,{cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
-  }});
+}});
 
 //socket behavior
 setIO(io);
@@ -30,9 +38,7 @@ io.on('connection', function(socket) {
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(csrfMiddleware);
-app.use(cors({
-    origin: 'http://localhost:3000'
-  }));
+app.use(cors(corsOptions));
 app.all("*", (req, res, next) =>{
     res.cookie("XSRF-TOKEN", token = req.csrfToken());
     console.log(token);
