@@ -16,6 +16,7 @@ import Button from '@material-ui/core/Button';
 
 import LoginDialogue from './logindialogue.js'
 import SignUpDialogue from './signupdialogue.js'
+import ProfileDialogue from './profileDialogue'
 // import { Dialog } from '@mui/material'
 //import Stack from '@mui/material/Stack';
 function App() {
@@ -230,6 +231,8 @@ class Login extends React.Component {
     const LoginDialog = this.state.LoginDialog;
     const SignUpDialog = this.state.SignUpDialog;
     let button;
+    if (!isLoggedIn)
+    {
     return (
       <div className="form">
     <script src="../styles.css" type="text/babel"></script>
@@ -239,9 +242,10 @@ class Login extends React.Component {
         Guest
       </Button>
     <div className="drop1">
-      {buttonIsPressed && !isLoggedIn? <div> 
+      {buttonIsPressed? <div> 
       <LoginDialogue /> 
-      <SignUpDialogue /> </div>
+      <SignUpDialogue />
+      <ProfileDialogue /> </div>
       : <div><span></span></div>}
       
     </div>
@@ -279,9 +283,59 @@ class Login extends React.Component {
 
   </div>
   
-    );
-    
+    );  
   }
+  else{
+    return (
+    <div className="form">
+    <script src="../styles.css" type="text/babel"></script>
+    
+    <Button variant="outlined" 
+              color="secondary" onClick={() => this.handleClick(0)}>
+        Profile
+      </Button>
+    <div className="drop2">
+      {buttonIsPressed? <div> 
+      <LoginDialogue /> 
+      <SignUpDialogue /> </div>
+      : <div><span></span></div>}
+      
+    </div>
+    <div>
+      
+    </div>
+    {/* <div>
+      <Button variant="outlined" 
+              color="primary" onClick={handleClickOpen}>
+        Open My Custom Dialog
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>
+           Greetings from GeeksforGeeks
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Do you do coding ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+           Close
+          </Button>
+          <Button onClick={handleClose} color="primary" autoFocus>
+           Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div> */}
+    {/* <Button startIcon={<LoginIcon />} color="primary" variant="contained">
+  Login
+</Button> */}
+    
+  </div>
+    );  
+  }
+}
   
   // render() {
   //     return (
