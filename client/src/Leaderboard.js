@@ -1,5 +1,6 @@
 import React from 'react';
 import Pagination from './Pagination';
+import Button from '@material-ui/core/Button';
 
 // testdata to be removed later
 const origdata = [
@@ -70,7 +71,7 @@ export default function Leaderboard() {
   return (
     <React.Fragment>
       <div className="minimized-container" style={minimizedStyle.container}>
-        <button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</button>     
+        <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>     
         {userlist.slice(0, 5)}
       </div>
       {open && (
@@ -125,7 +126,7 @@ const minimizedStyle = {
     padding: 5,
     borderRadius: 5,
     float: "right",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: "rgba(8, 99, 193, 0.2)",
     position: "fixed",
     top: "100px",
     right: "10px"
@@ -133,8 +134,9 @@ const minimizedStyle = {
   header: {
     fontWeight: "bold",
     fontSize: 15,
-    backgroundColor: "transparent",
+    backgroundColor: "rgb(8, 99, 193, 0.5)",
     textAlign: "center",
+    
   },
   text: {
     fontSize: 11,
