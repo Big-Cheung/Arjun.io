@@ -195,27 +195,27 @@ class Login extends React.Component {
     super(props);
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleLogoutClick = this.handleLogoutClick.bind(this);
-    this.state = {isLoggedIn: false, LoginDialog: false, SignUpDialog: false};
+    this.state = {buttonIsPressed: false, LoginDialog: false, SignUpDialog: false, isLoggedIn: false};
   }
   handleLoginClick() {
-    if(this.isLoggedIn)
-      this.setState({isLoggedIn: false});
+    if(this.buttonIsPressed)
+      this.setState({buttonIsPressed: false});
     else
-      this.setState({isLoggedIn: true});
+      this.setState({buttonIsPressed: true});
   }
 
   handleLogoutClick() {
-    this.setState({isLoggedIn: false});
+    this.setState({buttonIsPressed: false});
   }
 
   handleClick = (index) => {
     console.log("button clicked" + index);
-    if(this.isLoggedIn == true){
-      this.setState({isLoggedIn: false});
+    if(this.buttonIsPressed == true){
+      this.setState({buttonIsPressed: false});
 
     }
-    else if (this.isLoggedIn == false || this.isLoggedIn == undefined){
-      this.setState({isLoggedIn: true});
+    else if (this.buttonIsPressed == false || this.buttonIsPressed == undefined){
+      this.setState({buttonIsPressed: true});
     }
     if(index == 1){
       this.setState({LoginDialog: true})
@@ -225,6 +225,7 @@ class Login extends React.Component {
     }
   }
   render() {
+    const buttonIsPressed = this.state.buttonIsPressed;
     const isLoggedIn = this.state.isLoggedIn;
     const LoginDialog = this.state.LoginDialog;
     const SignUpDialog = this.state.SignUpDialog;
@@ -238,7 +239,7 @@ class Login extends React.Component {
         Guest
       </Button>
     <div className="drop1">
-      {isLoggedIn ? <div> 
+      {buttonIsPressed && !isLoggedIn? <div> 
       <LoginDialogue /> 
       <SignUpDialogue /> </div>
       : <div><span></span></div>}
@@ -302,8 +303,8 @@ function GuestGreeting(props) {
 }
 
 function Greeting(props) {
-  const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
+  const buttonIsPressed = props.buttonIsPressed;
+  if (buttonIsPressed) {
     return <UserGreeting />;
   }
   return <GuestGreeting />;
@@ -331,12 +332,12 @@ export default Login;
 
 
 {/* <div><div onClick={() => this.handleClick(1)}>
-      <button className="dropbtn" style={cardStyles.button} isLoggedIn={isLoggedIn}>
+      <button className="dropbtn" style={cardStyles.button} buttonIsPressed={buttonIsPressed}>
       
       <a>Log in</a>
       </button></div>
       <div onClick={() => this.handleClick(2)} >
-      <button className="dropbtn" style={cardStyles.button} isLoggedIn={isLoggedIn}>
+      <button className="dropbtn" style={cardStyles.button} buttonIsPressed={buttonIsPressed}>
       
       <a>Sign Up</a>
       </button></div> </div>  */}
