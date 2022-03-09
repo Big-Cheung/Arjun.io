@@ -1,7 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import Pagination from './Pagination';
 import Button from '@material-ui/core/Button';
-
+import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 // testdata to be removed later
 const origdata = [
   {username: 'name1', score: 10},
@@ -32,7 +34,24 @@ const testdata = origdata.sort((a, b) => b.score - a.score).map((item, i) => {
 });
 
 export default function Leaderboard() {
-  
+  const theme = createMuiTheme({
+    overrides: {
+      MuiCssBaseline: {
+        "@global": {
+          "*::-webkit-scrollbar": {
+            width: "10px"
+          },
+          "*::-webkit-scrollbar-track": {
+            background: "#E4EFEF"
+          },
+          "*::-webkit-scrollbar-thumb": {
+            background: "#1D388F61",
+            borderRadius: "2px"
+          }
+        }
+      }
+    }
+  });
   // Leaderboard Button
   const [open, setOpen] = React.useState(false);
 
@@ -77,7 +96,7 @@ export default function Leaderboard() {
       {open && (
         <div className="expanded-container" style={expandedStyle.container}>
           <div className="expanded-header" style={expandedStyle.header}>Leaderboard</div>
-          <input type="text" placeholder="Search..." onChange={event => {searchData(event.target.value)}}/>
+          <TextField type="text" margin="dense" placeholder="Search..." style={minimizedStyle.score} onChange={event => {searchData(event.target.value)}}/>
           <ColumnHeader/>
           {sliceSearchList(searchlist, indexOfLastUser, indexOfFirstUser)}
           <Pagination usersPerPage={usersPerPage} totalUsers={searchlist.length} paginate={paginate}/>
@@ -89,7 +108,8 @@ export default function Leaderboard() {
 
 const User = ({ rank, username, score}) => {
   return (
-    <div className="minimized-user" style={minimizedStyle.user}>
+    <div>
+{/* <div className="minimized-user" style={minimizedStyle.user}>
       <div className="minimized-rank" style={minimizedStyle.rank}>
         <div className="minimized-text" style={minimizedStyle.text}>{rank}</div>
       </div>
@@ -99,7 +119,31 @@ const User = ({ rank, username, score}) => {
       <div className="minimized-score" style={minimizedStyle.score}>
         <div className="minimized-text" style={minimizedStyle.text}>{score}</div>
       </div>
+      
+    </div> */}
+    <Box component="span" sx={{ display: 'block',p: 1,
+          m: 1,
+          bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+          color: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+          border: '1px solid',
+          borderColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+          borderRadius: 2,
+          fontSize: '0.775rem',
+          fontWeight: '700'}}>
+          <table style={expandedStyle.table}>
+            <tr style={expandedStyle.row}> 
+            <td style={expandedStyle.column}>{rank}</td>
+            <td style={expandedStyle.column}>{username}</td>
+            <td style={expandedStyle.column}>{score}</td>
+            </tr>
+          </table>
+          
+          </Box>
     </div>
+    
+    
   )
 };
 
@@ -129,12 +173,12 @@ const minimizedStyle = {
     backgroundColor: "rgba(8, 99, 193, 0.2)",
     position: "fixed",
     top: "100px",
-    right: "10px"
+    right: "10px",
   },
   header: {
     fontWeight: "bold",
     fontSize: 15,
-    backgroundColor: "rgb(8, 99, 193, 0.5)",
+    backgroundColor: "rgb(66, 141, 211)",
     textAlign: "center",
     
   },
@@ -158,20 +202,27 @@ const minimizedStyle = {
   score: {
     paddingLeft: 5,
   },
+  
 };
 
 const expandedStyle = {
   container: {
-    backgroundColor: "white",
-    height: 400,
+    
     width: 400,
     margin: "auto",
     top: 100,
+    backgroundColor: "rgb(113, 183, 227)",
+    position: "fixed",
+    top: "20px",
+    right: "37%",
+
   },
   header: {
     fontWeight: "bold",
-    fontSize: 30,
+    fontSize: 27,
     textAlign: "center",
+    padding: "10px",
+    backgroundColor: "rgb(66, 141, 211)"
   },
   text: {
     fontSize: 11,
@@ -194,5 +245,15 @@ const expandedStyle = {
   },
   coltext: {
     fontSize: 20,
+    fontFamily: "Roboto"
+  },
+  table: {
+    display: "flex",
+    width: "100%",
+  },
+  column: {
+  },
+  row: {
+    alignItems: "left",
   }
 }

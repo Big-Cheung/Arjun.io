@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
 
 const Pagination = ({ usersPerPage, totalUsers, paginate}) => {
   const pageNumbers = [];
@@ -11,9 +12,10 @@ const Pagination = ({ usersPerPage, totalUsers, paginate}) => {
       <div className="pagination" style={paginateStyle.container}>
         {pageNumbers.map(number => (
           <div key={number} className="page-item" style={paginateStyle.pages}>
-            <button onClick={() => paginate(number)} className='page-link'>
+            <Button variant="outlined" 
+              color="primary" onClick={() => paginate(number)} className='page-link'>
               {number}
-            </button>       
+            </Button>       
           </div>
         ))}
       </div>
@@ -31,14 +33,14 @@ const paginateStyle = {
     alignItems: "center",
     color: "black",
     float: "center",
-    paddingTop: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
-    paddingBottom: 8,
-    textDecoration: "none",
-    borderWidth: 1,
-    borderStyle: "solid",
-    fontSize: 16,
+    // paddingTop: 8,
+    // paddingLeft: 12,
+    // paddingRight: 12,
+    // paddingBottom: 8,
+    // textDecoration: "none",
+    // borderWidth: 1,
+    // borderStyle: "solid",
+    // fontSize: 16,
   },
 }
 export default Pagination

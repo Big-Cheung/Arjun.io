@@ -130,12 +130,10 @@ const mystyle = {
 const cardStyles = {
   container: {
     display: "flex",
-    height: 100,
-    width: 400,
     boxShadow: "0 0 3px 2px #cec7c759",
     alignItems: "center",
-    padding: 20,
-    borderRadius: 20,
+    // padding: 10,
+    borderRadius: 5,
   },
   field: {
     justifyContent: "center",
@@ -238,7 +236,7 @@ class Login extends React.Component {
     <script src="../styles.css" type="text/babel"></script>
     
     <Button variant="outlined" 
-              color="secondary" onClick={() => this.handleClick(0)}>
+              color="secondary" onClick={() => this.handleClick(0)} style={cardStyles.container}>
         Guest
       </Button>
     <div className="drop1">
