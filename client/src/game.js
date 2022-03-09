@@ -3,6 +3,7 @@ import { Group, Vector3 } from "three"
 import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
 import { post, read } from "./events.js"
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 //game globals
 let state = 0;

@@ -48,7 +48,19 @@ app.use(express.json());
 
 //API response
 app.get("/leaderboard", (req, res) => {
-    res.json({ message: "Hello from server!" });
+    getUserData("").then((e) => {
+        let sorted = []
+        for (var element in e) {
+            let newArray = {}
+            newArray.points = e[element].points
+            newArray.username = e[element].user
+            newArray.games = e[element].games
+            newArray.wins = e[element].wins
+            sorted.push(newArray);
+        }
+        sorted.sort((a,b) => b.points - a.points);
+        res.json(sorted);
+    })
 });
 
 app.use("/login", (req, res) => {
