@@ -5,13 +5,15 @@ import './styles.css';
 import game from "./game.js"
 import Leaderboard from "./Leaderboard.js"
 import TitleScreen from "./title.js"
-
+import GameTimer from './timer.js'
+import Login from './login.js'
 
 ReactDOM.render(
   <Suspense fallback={<div>Loading...</div>}>
-    <App/>
+    <Login/>
     <Leaderboard/>
     <TitleScreen/>
+    <GameTimer/>
   </Suspense>,
   document.getElementById('root')
 
