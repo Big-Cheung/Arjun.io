@@ -209,13 +209,15 @@ class Login extends React.Component {
 
   handleClick = (index) => {
     console.log("button clicked" + index);
-    if(this.buttonIsPressed == true){
-      this.setState({buttonIsPressed: false});
+    if(index == 0){
+
+      this.setState({buttonIsPressed: !this.state.buttonIsPressed});
 
     }
     else if (this.buttonIsPressed == false || this.buttonIsPressed == undefined){
       this.setState({buttonIsPressed: true});
     }
+
     if(index == 1){
       this.setState({LoginDialog: true})
     }
