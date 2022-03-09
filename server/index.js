@@ -9,7 +9,7 @@ const {
     attemptSignup, 
     getUserData, 
     updateUserData
-} = require("./firebase.js")
+} = require("./firebase.js");
 
 const PORT = 3001;
 const app = express();
@@ -28,9 +28,11 @@ setUpdateFunction((points,mapping) => {
             continue;
         }
         let uid = mapping[socketid].uid
-        mapping[socketid]["points"] += points["points"]
-        mapping[socketid]["wins"] += points["wins"]
-        mapping[socketid]["games"] += points["games"]
+        mapping[socketid]["points"] += points[socketid]["points"]
+        mapping[socketid]["wins"] += points[socketid]["wins"]
+        mapping[socketid]["games"] += points[socketid]["games"]
+        console.log("updating points for " + socketid);
+        console.log(mapping[socketid]);
         updateUserData(uid,mapping[socketid]);
     }
 });
@@ -55,7 +57,8 @@ app.use("/login", (req, res) => {
     .then((data) =>{
         if (data.status == "success") {
             res.send(data)
-            addPlayerData(data.user,req.body[2]);
+            delete data.status
+            addPlayerData(data,req.body[2]);
         } else {
             console.log(data);
             res.send(data);
@@ -65,11 +68,12 @@ app.use("/login", (req, res) => {
 
 app.use("/signup", (req, res) => {
     console.log(req.body)
-    attemptSignup(req.body[0],req.body[1],req.body[2], req.body[3])
+    attemptSignup(req.body[0],req.body[1],req.body[2])
     .then((data) =>{
         if (data.status == "success") {
             res.send(data)
-            addPlayerData(data.user,req.body[2]);
+            delete data.status
+            addPlayerData(data,req.body[3]);
         } else {
             res.send(data);
         }

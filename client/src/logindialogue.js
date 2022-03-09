@@ -6,7 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { read, post } from './events.js';
+import { read, post, send } from './events.js';
 
 
 async function loginUser(creds) {
@@ -62,8 +62,8 @@ const LoginDialog = () => {
     
     //Post playerdata for any client to read
     delete data.status;
+    send("login",data);
     post("userData",data)
-
     handleClose();
   }
 

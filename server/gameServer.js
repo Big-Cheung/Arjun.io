@@ -97,6 +97,10 @@ const stateMap = [
             } else if (socket.id in lobby) {
                 delete lobby[socket.id];
             }
+
+            if (socket.id in playerdata) {
+                delete playerdata[socket.id];
+            }
         },
         'update':()=> {
             switch(game){
@@ -131,11 +135,12 @@ const stateMap = [
             
             for (var e in players) {
                 pointsObj[e] = {}
-                pointsObj[e]["points"] = players[e]["points"]
+                pointsObj[e]["points"] = players[e]["score"]
                 pointsObj[e]["points"] += players[e]["team"] == teamTotal ? 10 : 0
-                pointsObj[e]["wins"] += players[e]["team"] == teamTotal ? 1 : 0
-                pointsObj[e]["games"] += 1
+                pointsObj[e]["wins"] = players[e]["team"] == teamTotal ? 1 : 0
+                pointsObj[e]["games"] = 1
                 players[e]["team"] = 0;
+                players[e]["score"] = 0;
             }
 
             updateScore(pointsObj, playerdata)
@@ -270,7 +275,9 @@ function initSocket(socket) {
 
 //Database methods
 function addPlayerData(data, socket) {
-    playerdata[socket] = {...data};
+    console.log("Added data at socket " + socket)
+    console.log(data);
+    playerdata[socket] = data;
 }
 
 function updateScore(points, datamapping) {

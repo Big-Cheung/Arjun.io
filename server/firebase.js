@@ -58,7 +58,7 @@ function attemptLogin(email, password) {
     .then((data) =>{
       signOut(auth)
       return {status:"success",
-              user:data.username,
+              user:data.user,
               wins:data.wins,
               points:data.points,
               games:data.games,
@@ -81,18 +81,19 @@ function attemptSignup(email, password, username) {
     //signed in
     const user = userCredential.user;
     writeUserData(user.uid, 
-      {username:username,
+      {user:username,
       points:0,
       wins:0,
       games:0,
-      model:0})
+      model:0,})
     signOut(auth)
     return {status:"success",
-            name:username,
+            user:username,
             points:0,
             wins:0,
             games:0,
-            model:0}
+            model:0,
+            uid:user.uid}
     })
   .catch((error)=> {
     let res = {}
