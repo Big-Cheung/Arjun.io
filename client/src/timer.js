@@ -57,7 +57,9 @@ const cardStyles = {
     timer:{
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: '500px',
+        paddingLeft: '40%',
+        position: 'fixed',
+        top: '30px',
     }
   };
   
