@@ -126,6 +126,9 @@ const minimizedStyle = {
     borderRadius: 5,
     float: "right",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
+    position: "fixed",
+    top: "100px",
+    right: "10px"
   },
   header: {
     fontWeight: "bold",
