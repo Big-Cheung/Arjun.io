@@ -44,6 +44,13 @@ function getUserData(userId) {
   })
 }
 
+//dictionary key|value
+//username|data
+function getLeaderboard() {
+
+}
+
+
 function attemptLogin(email, password) {
   return signInWithEmailAndPassword(auth,email,password)
   .then((cred) => {
@@ -51,7 +58,11 @@ function attemptLogin(email, password) {
     .then((data) =>{
       signOut(auth)
       return {status:"success",
-              user:data.username}})
+              user:data.username,
+              wins:data.wins,
+              points:data.points,
+              games:data.games,
+              uid:cred.user.uid}})
   }).catch((error) =>{
     let res = {}
     if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
@@ -75,7 +86,10 @@ function attemptSignup(email, password, username) {
       games:0,})
     signOut(auth)
     return {status:"success",
-            name:user.username}
+            name:username,
+            points:0,
+            wins:0,
+            games:0}
     })
   .catch((error)=> {
     let res = {}

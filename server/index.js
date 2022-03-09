@@ -3,7 +3,7 @@ const http = require("http");
 const cors = require('cors');
 
 const { Server } = require("socket.io");
-const { setIO, initSocket, startGameLoop } = require("./gameServer");
+const { setIO, initSocket, startGameLoop,setUpdateFunction } = require("./gameServer");
 const { 
     attemptLogin, 
     attemptSignup, 
@@ -22,6 +22,19 @@ const io = new Server(server,{cors: {
 
 //socket behavior
 setIO(io);
+setUpdateFunction((points,mapping) => {
+    for (var socketid in points) {
+        if (!(socketid in mapping)) {
+            continue;
+        }
+        let uid = mapping[socketid].uid
+        mapping[socketid]["points"] += points["points"]
+        mapping[socketid]["wins"] += points["wins"]
+        mapping[socketid]["games"] += points["games"]
+        updateUserData(uid,mapping[socketid]);
+    }
+});
+
 startGameLoop();
 
 io.on('connection', function(socket) {
@@ -32,7 +45,7 @@ app.use(cors());
 app.use(express.json());
 
 //API response
-app.get("/api", (req, res) => {
+app.get("/leaderboard", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
@@ -41,7 +54,8 @@ app.use("/login", (req, res) => {
     attemptLogin(req.body[0],req.body[1])
     .then((data) =>{
         if (data.status == "success") {
-            res.send({status:data.status,username:data.user})
+            res.send(data)
+            addPlayerData(data.user,req.body[2]);
         } else {
             console.log(data);
             res.send(data);

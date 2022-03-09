@@ -6,9 +6,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { read, post } from './events.js';
 
 
 async function loginUser(creds) {
+  let socketid = read("socketid");
+  if (socketid == undefined) {
+    return {"status":"failed","msg":"reading socket ID error"};
+  }
+  creds.push(socketid);
   return fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: {
@@ -18,8 +24,6 @@ async function loginUser(creds) {
   })
   .then((res) => {
     return res.json()
-  }).then(data => {
-    return data;
   })
 }
 
@@ -46,18 +50,22 @@ const LoginDialog = () => {
         username,
         password
     ]);
+
     //If this is the case, login failed
     //We can probably improve this code with more data
     //but for now, lets just get this thing logged in
-    console.log(data)
     if (data.status == "failed") {
       //handle failed login response
       console.log(data.msg);
       return;
     }
-    console.log(data.user);
+    
+    //Post playerdata for any client to read
+    delete data.status;
+    post("userData",data)
+
     handleClose();
-}
+  }
 
   return (
     <div>

@@ -2,6 +2,7 @@ import * as three from "three"
 import { Group, Vector3 } from "three"
 import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
+import { post, read } from "./events.js"
 
 //game globals
 let state = 0;
@@ -9,7 +10,8 @@ let game = 0;
 let statics = {}
 let others = {}
 let player;
-const keys = [0,0,0,0,0,0]
+let needsUpdate = false;
+const keys = [false,false,false,false,false]
 
 //socket globals
 var socket;
@@ -32,11 +34,16 @@ const MAX_X = 15
 const MIN_Z = -15
 const MAX_Z = 15
 //player loads
-const geometry = new three.BoxGeometry();
+const geometry = new three.CylinderGeometry(0.5,0.5);
 const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
 const otherMat = new three.MeshLambertMaterial( { color: 0x1166ff } );
 const infectedMat = new three.MeshBasicMaterial( { color: 0xff0000 } );
 
+const teamColors = [
+    0x008800,
+    0x0000ff,
+    0xff0000
+]
 //utils
 const keyMap = {
     "w":0,
@@ -44,12 +51,12 @@ const keyMap = {
     "s":2,
     "d":3,
     "r":4,
-    "t":5
 }
 
 class PlayerModel {
-    constructor(name,material) {
-        this.body = new three.Mesh(geometry, material);
+    constructor(name,color) {
+        this.material = new three.MeshLambertMaterial( { color: color } ); 
+        this.body = new three.Mesh(geometry, this.material);
         this.group = new Group();
         this.tag = new Text();
         this.tag.text = name;
@@ -67,9 +74,14 @@ class PlayerModel {
         this.tag.dispose();
         this.body.dispose();
         this.group.dispose();
+        this.material.dispose();
     }
 
-    update(dt, camera) {
+    changeColor(color) {
+        this.material.color.setHex(color)
+    }
+
+    update() {
         this.tag.quaternion.copy(statics.camera.quaternion);
     }
 }
@@ -77,7 +89,7 @@ class PlayerModel {
 class OtherPlayer {
     //Constructory/Destructor
     constructor(name,pos=[0,0,0]) {
-        this.obj = new PlayerModel(name,otherMat);
+        this.obj = new PlayerModel(name,0x0022ff);
         this.position = new Vector3(...pos);
     }
 
@@ -97,7 +109,7 @@ class Player {
     //Constructor/Destructor
     constructor(name) {
         this.name = name;
-        this.obj = new PlayerModel(this.name,playerMat);
+        this.obj = new PlayerModel(this.name,0x0000ff);
         this.position = new Vector3(0,0,4);
         targetObj = this.obj.group.position;
         statics.camera.zoom = 2;
@@ -156,16 +168,21 @@ class Player {
 function initSockets() {
     window.addEventListener("beforeunload",socket.disconnect);
 
+    post("socketid",socketID);
+
     //Player list
     socket.on("pl",(e) => {
+        console.log("Got player list");
         for (var el in e) {
             others[el] = new OtherPlayer(e[el]["name"],e[el]["position"]);
+            others[el].obj.changeColor(teamColors[e[el]["team"]]);
             statics.scene.add(others[el].obj.group);
         }
     })
 
     //Game join
     socket.on("gj", (e) => {
+        console.log("got game join");
         player = new Player("Guest");
         statics.scene.add( player.obj.group );
         socket.emit("j","Guest");
@@ -177,6 +194,19 @@ function initSockets() {
             targetObj = player.obj.group.position
         } else {
             targetObj = new Vector3(0,0,5);
+        }
+    })
+
+    //Game end
+    socket.on("ge", (e) => {
+        if (socketID in e) {
+            player.obj.changeColor(teamColors[e[socketID]["team"]]);
+        }
+        for (var el in e) {
+            if (el == socketID) {
+                continue;
+            }
+            others[el].obj.changeColor(teamColors[e[el]["team"]]);
         }
     })
 
@@ -206,6 +236,22 @@ function initSockets() {
                 continue;
             }
             others[el].position.set(...e[el].position);
+        };
+    })
+
+    //Game 1 event update
+    socket.on("g1u", (e) => {
+        if (socketID in e) {
+            console.log("Team : " + e[socketID]["team"]);
+            player.position.set(...e[socketID].position);
+            player.obj.changeColor(teamColors[e[socketID]["team"]]);
+        }
+        for (var el in e){
+            if (el == socketID ) {
+                continue;
+            }
+            others[el].position.set(...e[el].position);
+            others[el].obj.changeColor(teamColors[e[el]["team"]]);
         };
     })
 }
@@ -258,7 +304,6 @@ export default function main() {
         for (var other in others) {
             others[other].update();
         }
-        speed += (keys[4] - keys[5])*0.1;
         statics.camera.lookAt( targetObj )
         //controls.update();
         statics.renderer.render( statics.scene, statics.camera );
