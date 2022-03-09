@@ -62,6 +62,7 @@ function attemptLogin(email, password) {
               wins:data.wins,
               points:data.points,
               games:data.games,
+              model:data.model,
               uid:cred.user.uid}})
   }).catch((error) =>{
     let res = {}
@@ -83,13 +84,15 @@ function attemptSignup(email, password, username) {
       {username:username,
       points:0,
       wins:0,
-      games:0,})
+      games:0,
+      model:0})
     signOut(auth)
     return {status:"success",
             name:username,
             points:0,
             wins:0,
-            games:0}
+            games:0,
+            model:0}
     })
   .catch((error)=> {
     let res = {}

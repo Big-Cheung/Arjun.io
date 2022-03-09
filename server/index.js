@@ -3,7 +3,7 @@ const http = require("http");
 const cors = require('cors');
 
 const { Server } = require("socket.io");
-const { setIO, initSocket, startGameLoop,setUpdateFunction } = require("./gameServer");
+const { setIO, initSocket, startGameLoop,setUpdateFunction, addPlayerData } = require("./gameServer");
 const { 
     attemptLogin, 
     attemptSignup, 
@@ -65,10 +65,11 @@ app.use("/login", (req, res) => {
 
 app.use("/signup", (req, res) => {
     console.log(req.body)
-    attemptSignup(req.body[0],req.body[1],req.body[2])
+    attemptSignup(req.body[0],req.body[1],req.body[2], req.body[3])
     .then((data) =>{
         if (data.status == "success") {
-            res.send({status:data.status,username:data.user})
+            res.send(data)
+            addPlayerData(data.user,req.body[2]);
         } else {
             res.send(data);
         }

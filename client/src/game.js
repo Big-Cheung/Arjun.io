@@ -172,7 +172,6 @@ function initSockets() {
 
     //Player list
     socket.on("pl",(e) => {
-        console.log("Got player list");
         for (var el in e) {
             others[el] = new OtherPlayer(e[el]["name"],e[el]["position"]);
             others[el].obj.changeColor(teamColors[e[el]["team"]]);
