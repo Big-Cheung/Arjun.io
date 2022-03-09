@@ -155,6 +155,10 @@ const cardStyles = {
   userName: {
     fontWeight: "bold",
   },
+  content: {
+    display: "vertical",
+  justifyContent: "space-between",
+  }
 };
 // const renderForm = (
 //   // <div className="form">
@@ -242,7 +246,7 @@ class Login extends React.Component {
         Guest
       </Button>
     <div className="drop1">
-      {buttonIsPressed? <div> 
+      {buttonIsPressed? <div style={cardStyles.content}> 
       <LoginDialogue /> 
       <SignUpDialogue />
       <ProfileDialogue /> </div>
