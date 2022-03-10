@@ -54,7 +54,7 @@ app.get("/leaderboard", (req, res) => {
             let newArray = [e[element].points,e[element].user,e[element].games,e[element].wins];
             sorted.push(newArray);
         }
-        sorted.sort((a,b) => b[0]- a[1]);
+        sorted.sort((a,b) => b[0]- a[0]);
         res.json(sorted);
     })
 });
