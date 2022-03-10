@@ -224,7 +224,7 @@ function stateSwitchLoop() {
         stateMap[state].end()
         state = 0;
         stateMap[state].start()
-        io.emit("clock",[Date.now(),gameDuration]);
+        io.emit("clock",Date.now()+lobbyDuration,0);
         setTimeout(()=> {
             if (state !=2) {
                 console.log("Game Started");
@@ -232,7 +232,7 @@ function stateSwitchLoop() {
                 state = 1;
                 stateMap[state].start()
                 setTimeout(stateSwitchLoop,gameDuration)
-                io.emit("clock",[Date.now(),gameDuration]);
+                io.emit("clock",Date.now()+gameDuration,1);
             } else {
                 state = 0;
             }
@@ -256,7 +256,7 @@ function initSocket(socket) {
     //run console log on connect
     let clippedData = {}
     for (var e in playerdata) {
-        clippedData[e] = [e,playerdata[e].user]
+        clippedData[e] = [playerdata[e].user]
     }
     socket.emit('pdl',clippedData)
     socket.emit('pl',players)
