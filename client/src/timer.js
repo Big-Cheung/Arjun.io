@@ -31,6 +31,7 @@ const GameTimer = () => {
             (minutes > 9 ? minutes : '0' + minutes) + ':'
             + (seconds > 9 ? seconds : '0' + seconds)
         )
+        console.log(timer)
     }
     if (Ref.current) 
     clearInterval(Ref.current);
@@ -41,17 +42,23 @@ const GameTimer = () => {
     
     if (GameTimer === 1)
     {
+    if (timer === '00:00')
+    {
+      return null
+    }
+    else{
     return (
       <div>
         <h1 style = {cardStyles.timer}> {timer}</h1>
       </div>
     );
+    }
   }
+  
   else
   {
     return (
         <div>
-          <h2 style = {cardStyles.lobby}>Time left in Lobby:{timer}</h2>
         </div>
       );
       
