@@ -4,6 +4,10 @@ import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
 import { post, read } from "./events.js"
 
+
+
+
+
 /*const loader = new GLTFLoader();    
 loader.load("./assets/cat.glb",
     (gltf) => {
@@ -103,7 +107,7 @@ class PlayerModel {
 class OtherPlayer {
     //Constructory/Destructor
     constructor(name,pos=[0,0,0]) {
-        this.obj = new PlayerModel(name,0x0022ff);
+        this.obj = new PlayerModel(name,0x008800);
         this.position = new Vector3(...pos);
     }
 
@@ -123,7 +127,7 @@ class Player {
     //Constructor/Destructor
     constructor(name) {
         this.name = name;
-        this.obj = new PlayerModel(this.name,0x0000ff);
+        this.obj = new PlayerModel(this.name,0x008800);
         this.position = new Vector3(0,0,4);
         targetObj = this.obj.group.position;
         statics.camera.zoom = 2;
@@ -317,6 +321,17 @@ export default function main() {
     statics.renderer = new three.WebGLRenderer({antialias:true});
     statics.renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( statics.renderer.domElement );
+
+    const loader = new three.CubeTextureLoader();
+    const texture = loader.load([
+        'assets/pos-x.png',
+        'assets/neg-x.png',
+        'assets/pos-y.png',
+        'assets/neg-y.png',
+        'assets/pos-z.png',
+        'assets/neg-z.png',
+    ]);
+    statics.scene.background = texture;
     
     createCamera();
   
