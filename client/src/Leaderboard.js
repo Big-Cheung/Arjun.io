@@ -31,14 +31,17 @@ const [open, setOpen] = React.useState(false);
 
 // Fetch current game data
 const [currentdata, setCurrentData] = React.useState();
-listen("updateScores", (e) => {
-  setCurrentData(e
-    .sort((a, b) => {return (b[1] - a[1])})
-    .slice(0, 5)
-    .map((user) =>
-      <CurrentUser username={user[0]} rank={e.indexOf(user) + 1} points={user[1]} team={user[2]} />
-  ));
-})
+React.useEffect(() => {
+  listen("updateScores", (e) => {
+    setCurrentData(e
+      .sort((a, b) => {return (b[1] - a[1])})
+      .slice(0, 5)
+      .map((user) =>
+        <CurrentUser username={user[0]} rank={e.indexOf(user) + 1} points={user[1]} team={user[2]} />
+    ));
+  })
+}, []);
+
 
 // Fetch All Leaderboard Data
 const [userdata, setUserdata] = React.useState([]);
