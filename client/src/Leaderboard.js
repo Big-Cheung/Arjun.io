@@ -42,14 +42,16 @@ React.useEffect(() => {
 
 // O(N) find current top 5 players
 function getMax(array) {
-  if (array.length <= 5) return array;
+  if (array.length <= 5) {
+    return array.sort((a, b) => {return b[1] - a[1]});
+  }
   let max = array.slice(0, 5);
-  max.sort((a, b) => {return a[1] - b[1]})
+  max.sort((a, b) => {return b[1] - a[1]});
 
   for (let i = 5; i < array.length; i++) {
-    if (array[i][1] > max[0][1]) {
+    if (array[i][1] > max[4][1]) {
       max[0] = array[i];
-      max.sort((a, b) => {return a[1] - b[1]});
+      max.sort((a, b) => {return b[1] - a[1]});
     }
   }
   return max;
