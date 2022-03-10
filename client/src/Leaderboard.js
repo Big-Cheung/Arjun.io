@@ -4,34 +4,6 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-// testdata to be removed later
-const origdata = [
-  {username: 'name1', score: 10},
-  {username: 'name2', score: 20},
-  {username: 'name3', score: 30},
-  {username: 'name4', score: 40},
-  {username: 'name5', score: 50},
-  {username: 'name6', score: 60},
-  {username: 'name7', score: 70},
-  {username: 'name8', score: 80},
-  {username: 'name9', score: 90},
-  {username: 'name10', score: 100},
-  {username: 'name11', score: 110},
-  {username: 'name12', score: 120},
-  {username: 'name13', score: 130},
-  {username: 'name14', score: 140},
-  {username: 'name15', score: 150},
-  {username: 'name16', score: 160},
-  {username: 'name17', score: 170},
-  {username: 'name18', score: 180},
-  {username: 'name19', score: 190},
-  {username: 'name20', score: 200},
-];
-
-const testdata = origdata.sort((a, b) => b.score - a.score).map((item, i) => {
-    item.rank = i + 1;
-    return item;
-});
 
 export default function Leaderboard() {
   const theme = createMuiTheme({
@@ -52,25 +24,47 @@ export default function Leaderboard() {
       }
     }
   });
-  // Leaderboard Button
-  const [open, setOpen] = React.useState(false);
 
-  // Process Data
-  let sorted = testdata.sort((a, b) => b.score - a.score);
-  let userlist = sorted.map((user, i) =>
-  <User username={user.username} rank={user.rank} score={user.score} />
-  );
+// Leaderboard Button
+const [open, setOpen] = React.useState(false);
+
+// Fetch Leaderboard Data
+let [userdata, setUserdata] = React.useState([])
+
+  React.useEffect(() => {
+    fetch('http://localhost:3001/leaderboard', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+          },
+      })
+      .then((response) => response.json())
+      .then((users) => setUserdata(users));
+  }, [open]);
+  console.log(userdata);
+  
+  // Process and update data
   const [indexOfLastUser, setLastIdx] = React.useState(0);
-  const [indexOfFirstUser, setFirstIdx] = React.useState(10);  // Search
-  const [searchlist, setSearchList] = React.useState(userlist);
-  let page_number = 0;
+  const [indexOfFirstUser, setFirstIdx] = React.useState(10);
+  const [topList, setTopList] = React.useState();
+  const [searchlist, setSearchList] = React.useState();
+
+  React.useEffect(() => {
+    let userlist = userdata.map((user) =>
+    <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} />
+    );
+    setSearchList(userlist);
+    setTopList(userlist.slice(0, 5));
+  }, [userdata])
+
+  // Search
   const searchData = (query) => {
     if (query !== undefined) {
-      setSearchList(testdata
-        .filter(user => user.username.toLowerCase().includes(query.toLowerCase()))
-        .map((user, i) =>
-        <User username={user.username} rank={user.rank} score={user.score} />));
-    } else setSearchList(testdata)
+      setSearchList(userdata
+        .filter(user => user[1].toLowerCase().includes(query.toLowerCase()))
+        .map((user) =>
+        <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} />));
+    } else setSearchList(userdata)
   }
 
   const sliceSearchList = (a, b, c) => {
@@ -87,16 +81,19 @@ export default function Leaderboard() {
     setFirstIdx(((pageNumber -1 ) * usersPerPage) + usersPerPage);
   }
   
+  // UI
   return (
     <React.Fragment>
       <div className="minimized-container" style={minimizedStyle.container}>
-        <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>     
-        {userlist.slice(0, 5)}
+        <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>
+        <div>
+          {topList}
+        </div>   
       </div>
       {open && (
         <div className="expanded-container" style={expandedStyle.container}>
           <div className="expanded-header" style={expandedStyle.header}>Leaderboard</div>
-          <TextField type="text" margin="dense" placeholder="Search..." style={minimizedStyle.score} onChange={event => {searchData(event.target.value)}}/>
+          <TextField type="text" margin="dense" placeholder="Search..." style={minimizedStyle.points} onChange={event => {searchData(event.target.value)}}/>
           <ColumnHeader/>
           {sliceSearchList(searchlist, indexOfLastUser, indexOfFirstUser)}
           <Pagination usersPerPage={usersPerPage} totalUsers={searchlist.length} paginate={paginate}/>
@@ -106,21 +103,9 @@ export default function Leaderboard() {
   )
 };
 
-const User = ({ rank, username, score}) => {
+const User = ({ rank, username, points}) => {
   return (
     <div>
-{/* <div className="minimized-user" style={minimizedStyle.user}>
-      <div className="minimized-rank" style={minimizedStyle.rank}>
-        <div className="minimized-text" style={minimizedStyle.text}>{rank}</div>
-      </div>
-      <div className="minimized-name" style={minimizedStyle.username}> 
-        <div className="minimized-text" style={minimizedStyle.text}>{username}</div>
-      </div>
-      <div className="minimized-score" style={minimizedStyle.score}>
-        <div className="minimized-text" style={minimizedStyle.text}>{score}</div>
-      </div>
-      
-    </div> */}
     <Box component="span" sx={{ display: 'block',p: 1,
           m: 1,
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
@@ -136,14 +121,12 @@ const User = ({ rank, username, score}) => {
             <tr style={expandedStyle.row}> 
             <td style={expandedStyle.column}>{rank}</td>
             <td style={expandedStyle.column}>{username}</td>
-            <td style={expandedStyle.column}>{score}</td>
+            <td style={expandedStyle.column}>{points}</td>
             </tr>
           </table>
           
           </Box>
     </div>
-    
-    
   )
 };
 
@@ -156,12 +139,13 @@ const ColumnHeader = () => {
       <div className="col-name" style={expandedStyle.colname}>
         <div className="expanded-text" style={expandedStyle.coltext}>Name</div>
       </div>
-      <div className="col-score" style={expandedStyle.colscore}>
-        <div className="expanded-text" style={expandedStyle.coltext}>Score</div>
+      <div className="col-score" style={expandedStyle.colpoints}>
+        <div className="expanded-text" style={expandedStyle.coltext}>Points</div>
       </div>
   </div>
   ) 
 }
+
 const minimizedStyle = {
   container: {
     display: "flex",
@@ -199,7 +183,7 @@ const minimizedStyle = {
   username: {
     paddingLeft: 5,
   },
-  score: {
+  points: {
     paddingLeft: 5,
   },
   
@@ -240,7 +224,7 @@ const expandedStyle = {
   colname: {
     paddingLeft: 5,
   },
-  colscore: {
+  colpoints: {
     paddingLeft: 5,
   },
   coltext: {
