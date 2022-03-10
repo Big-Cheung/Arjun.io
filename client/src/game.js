@@ -69,7 +69,7 @@ const keyMap = {
     "a":1,
     "s":2,
     "d":3,
-    "r":4,
+    "p":4,
 }
 
 class PlayerModel {
