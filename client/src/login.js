@@ -250,7 +250,7 @@ class Login extends React.Component {
       {buttonIsPressed? <div style={cardStyles.content}> 
       <LoginDialogue /> 
       <SignUpDialogue />
-      <ProfileDialogue /> </div>
+       </div>
       : <div><span></span></div>}
       
     </div>
@@ -297,12 +297,11 @@ class Login extends React.Component {
     
     <Button variant="outlined" 
               color="secondary" onClick={() => this.handleClick(0)}>
-        Profile
+        MENU
       </Button>
     <div className="drop2">
       {buttonIsPressed? <div> 
-      <LoginDialogue /> 
-      <SignUpDialogue /> </div>
+        <ProfileDialogue /></div>
       : <div><span></span></div>}
       
     </div>

@@ -1,11 +1,21 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
+import {listen} from './events.js'
+import { StylesContext } from '@material-ui/styles';
 
 const GameTimer = () => {
     const [GameTimer, setGameTimer] = React.useState(false);
     const [timer, setTimer] = React.useState('00:00');
+    const [end, setEnd] = React.useState();
     const Ref = React.useRef(null);
+    React.useEffect(()=>{
+      listen("endTime", (args) => {
+        console.log("time = ",args[0]);
+        setEnd(args[0]);
+        console.log("game state = ",args[1]);
+        setGameTimer(args[1]);
+      })},[])
     function getTimeLeft(time){
         const currTime = Date.now();
         const total = time - currTime
@@ -23,18 +33,17 @@ const GameTimer = () => {
         )
     }
     if (Ref.current) 
-        clearInterval(Ref.current);
+    clearInterval(Ref.current);
     const id = setInterval(() => {
-        startTimer(1646848575316);
+    startTimer(end);
     }, 1000)
     Ref.current = id;
     
-    if (GameTimer)
+    if (GameTimer === 1)
     {
-    
     return (
       <div>
-          <h2>{timer}</h2>
+        <h1 style = {cardStyles.timer}> {timer}</h1>
       </div>
     );
   }
@@ -42,7 +51,7 @@ const GameTimer = () => {
   {
     return (
         <div>
-          <h1 style={cardStyles.timer}>{timer} </h1>
+          <h2 style = {cardStyles.lobby}>Time left in Lobby:{timer}</h2>
         </div>
       );
       
@@ -60,6 +69,10 @@ const cardStyles = {
         paddingLeft: '40%',
         position: 'fixed',
         top: '30px',
+        color: 'white',
+    },
+    lobby:{
+      color:'white'
     }
   };
   
