@@ -3,13 +3,26 @@ import { Group, Vector3 } from "three"
 import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
 import { post, read } from "./events.js"
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+/*const loader = new GLTFLoader();    
+loader.load("./assets/cat.glb",
+    (gltf) => {
+        gltf.scene.children[0].geometry.scale(0.05,0.05,0.05)
+        geometry = gltf.scene.children[0].geometry;
+    },
+    (xhr) => {
+        console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    },
+    (error) => {
+        console.log(error.message)
+})*/
 
 //game globals
 let state = 0;
 let game = 0;
 let statics = {}
 let others = {}
+let playerdata = {}
 let player;
 let needsUpdate = false;
 const keys = [false,false,false,false,false]
@@ -35,7 +48,7 @@ const MAX_X = 15
 const MIN_Z = -15
 const MAX_Z = 15
 //player loads
-const geometry = new three.CylinderGeometry(0.5,0.5);
+var geometry = new three.CylinderGeometry(0.5,0.5);
 const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
 const otherMat = new three.MeshLambertMaterial( { color: 0x1166ff } );
 const infectedMat = new three.MeshBasicMaterial( { color: 0xff0000 } );
@@ -183,9 +196,23 @@ function initSockets() {
     //Game join
     socket.on("gj", (e) => {
         console.log("got game join");
-        player = new Player("Guest");
+        let name = "Guest"
+        if (socketID in playerdata) {
+            name = playerdata[socketID]
+        }
+        player = new Player(name);
         statics.scene.add( player.obj.group );
-        socket.emit("j","Guest");
+        socket.emit("j",name);
+    })
+
+    socket.on("li", (e) => {
+        playerdata[e[0]] = e[1];
+        if (player && e[0] == socketID) {
+            player.obj.tag.text = e[1];
+        }
+        if (e[0] in others) {
+            others[e[0]].obj.tag.text = e[1];
+        }
     })
 
     //Game state updated

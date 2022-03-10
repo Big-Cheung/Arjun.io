@@ -278,6 +278,8 @@ function addPlayerData(data, socket) {
     console.log("Added data at socket " + socket)
     console.log(data);
     playerdata[socket] = data;
+    //Emits li method to all users telling them to update the other players.
+    io.emit("li",[socket, data.user])
 }
 
 function updateScore(points, datamapping) {

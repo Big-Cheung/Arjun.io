@@ -51,14 +51,10 @@ app.get("/leaderboard", (req, res) => {
     getUserData("").then((e) => {
         let sorted = []
         for (var element in e) {
-            let newArray = {}
-            newArray.points = e[element].points
-            newArray.username = e[element].user
-            newArray.games = e[element].games
-            newArray.wins = e[element].wins
+            let newArray = [e[element].points,e[element].user,e[element].games,e[element].wins];
             sorted.push(newArray);
         }
-        sorted.sort((a,b) => b.points - a.points);
+        sorted.sort((a,b) => b[0]- a[1]);
         res.json(sorted);
     })
 });
