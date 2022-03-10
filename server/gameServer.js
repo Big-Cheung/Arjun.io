@@ -145,7 +145,7 @@ const stateMap = [
 
             updateScore(pointsObj, playerdata)
 
-            io.emit("ge",players);
+            io.emit("ge",players,teamTotal != 0 ? (teamTotal > 0 ? 1 : 2) : 0);
         },
     }
 ]
@@ -254,6 +254,11 @@ function setIO(newIO) {
 
 function initSocket(socket) {
     //run console log on connect
+    let clippedData = {}
+    for (var e in playerdata) {
+        clippedData[e] = [e,playerdata[e].user]
+    }
+    socket.emit('pdl',clippedData)
     socket.emit('pl',players)
     stateMap[state]['connect'](socket);
 

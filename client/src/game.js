@@ -2,7 +2,7 @@ import * as three from "three"
 import { Group, Vector3 } from "three"
 import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
-import { post, read } from "./events.js"
+import { listen, post, read, send } from "./events.js"
 
 
 
@@ -62,6 +62,7 @@ const teamColors = [
     0x0000ff,
     0xff0000
 ]
+
 //utils
 const keyMap = {
     "w":0,
@@ -107,6 +108,7 @@ class PlayerModel {
 class OtherPlayer {
     //Constructory/Destructor
     constructor(name,pos=[0,0,0]) {
+        this.name = name;
         this.obj = new PlayerModel(name,0x008800);
         this.position = new Vector3(...pos);
     }
@@ -188,6 +190,10 @@ function initSockets() {
 
     post("socketid",socketID);
 
+    //Player data list
+    socket.on("pdl",(e) => {
+        playerdata = e;
+    })
     //Player list
     socket.on("pl",(e) => {
         for (var el in e) {
@@ -200,7 +206,7 @@ function initSockets() {
     //Game join
     socket.on("gj", (e) => {
         console.log("got game join");
-        let name = "Guest"
+        let name = "Guest " + Math.floor(Math.random() * 10000)
         if (socketID in playerdata) {
             name = playerdata[socketID]
         }
@@ -229,7 +235,7 @@ function initSockets() {
     })
 
     //Game end
-    socket.on("ge", (e) => {
+    socket.on("ge", (e,winner) => {
         if (socketID in e) {
             player.obj.changeColor(teamColors[e[socketID]["team"]]);
         }
@@ -239,6 +245,7 @@ function initSockets() {
             }
             others[el].obj.changeColor(teamColors[e[el]["team"]]);
         }
+        send("gameOver",winner);
     })
 
     //Join
@@ -272,10 +279,12 @@ function initSockets() {
 
     //Game 1 event update
     socket.on("g1u", (e) => {
+        let scores = []
         if (socketID in e) {
             console.log("Team : " + e[socketID]["team"]);
             player.position.set(...e[socketID].position);
             player.obj.changeColor(teamColors[e[socketID]["team"]]);
+            scores.push([player.name,e[socketID]["score"],e[socketID]["team"]])
         }
         for (var el in e){
             if (el == socketID ) {
@@ -283,7 +292,9 @@ function initSockets() {
             }
             others[el].position.set(...e[el].position);
             others[el].obj.changeColor(teamColors[e[el]["team"]]);
+            scores.push([others[el].name,e[el]["score"],e[el]["team"]])
         };
+        send("updateScores",scores);
     })
 }
 
