@@ -9,9 +9,13 @@ import IconButton from '@material-ui/core/IconButton';
 // import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import {FaAngleRight} from "react-icons/fa"
 import {FaAngleLeft} from "react-icons/fa"
+import { read, listen } from './events.js';
 
 const ProfileDialog = () => {
   const [open, setOpen] = React.useState(false);
+  var nullData = {user: "", wins: 0, points: 0, games: 0, model: 0, uid: ""};
+  const [userData, setuserData] = React.useState(nullData);
+  listen("login",(e)=>{setuserData(e)});
   const handleOpen = () => {
     setOpen(true);
   };
@@ -31,11 +35,11 @@ const ProfileDialog = () => {
         </DialogTitle>
         <DialogContent>
         <DialogContentText>
-            Username
+            {userData.user}
           </DialogContentText>
-          <h1>Wins: </h1>
-          <h1>Games played: </h1>
-          <h1>Points: </h1>
+          <h1>Wins: {userData.wins}</h1>
+          <h1>Games played: {userData.games}</h1>
+          <h1>Points: {userData.points}</h1>
           <div>
           <IconButton color="primary" aria-label="upload picture" component="span">
           <FaAngleLeft />
