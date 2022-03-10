@@ -13,7 +13,7 @@ ReactDOM.render(
     <Login/>
     <Leaderboard/>
     <TitleScreen/>
-    {/* <GameTimer/> */}d
+    {/* <GameTimer/> */}
   </Suspense>,
   document.getElementById('root')
 
