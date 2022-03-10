@@ -160,26 +160,30 @@ class Player {
     }
 
     keyUp(ev) {
-        if (ev.key in keyMap) {
-            keys[keyMap[ev.key]] = false;
-            if (socketID) {
-                socket.emit("kc",keys);
+        if (document.activeElement == document.body) {
+            if (ev.key in keyMap) {
+                keys[keyMap[ev.key]] = false;
+                if (socketID) {
+                    socket.emit("kc",keys);
+                }
+            } else if (ev.key === " ") {
+                statics.camera.zoom = 2;
+                statics.camera.updateProjectionMatrix();
             }
-        } else if (ev.key === " ") {
-            statics.camera.zoom = 2;
-            statics.camera.updateProjectionMatrix();
         }
     }
 
     keyDown(ev) {
-        if (ev.key in keyMap) {
-            keys[keyMap[ev.key]] = true;
-            if (socketID) {
-                socket.emit("kc",keys);
+        if (document.activeElement == document.body) {
+            if (ev.key in keyMap) {
+                keys[keyMap[ev.key]] = true;
+                if (socketID) {
+                    socket.emit("kc",keys);
+                }
+            } else if (ev.key === " ") {
+                statics.camera.zoom = 3;
+                statics.camera.updateProjectionMatrix();
             }
-        } else if (ev.key === " ") {
-            statics.camera.zoom = 3;
-            statics.camera.updateProjectionMatrix();
         }
     }
 }
@@ -197,7 +201,11 @@ function initSockets() {
     //Player list
     socket.on("pl",(e) => {
         for (var el in e) {
-            others[el] = new OtherPlayer(e[el]["name"],e[el]["position"]);
+            let name = e[el]["name"]
+            if (el in playerdata) {
+                name = playerdata[el];
+            }
+            others[el] = new OtherPlayer(name,e[el]["position"]);
             others[el].obj.changeColor(teamColors[e[el]["team"]]);
             statics.scene.add(others[el].obj.group);
         }
@@ -206,7 +214,7 @@ function initSockets() {
     //Game join
     socket.on("gj", (e) => {
         console.log("got game join");
-        let name = "Guest " + Math.floor(Math.random() * 10000)
+        let name = "Guest" + Math.floor(Math.random() * 10000)
         if (socketID in playerdata) {
             name = playerdata[socketID]
         }
@@ -226,7 +234,7 @@ function initSockets() {
     })
 
     //Game state updated
-    socket.on("gi", (e) => {
+    socket.on("gi", (e,curTime,length) => {
         if (player) {
             targetObj = player.obj.group.position
         } else {
@@ -295,6 +303,10 @@ function initSockets() {
             scores.push([others[el].name,e[el]["score"],e[el]["team"]])
         };
         send("updateScores",scores);
+    })
+
+    socket.on("clock",(time,state) => {
+        send("endTime",[time,state]);
     })
 }
 
