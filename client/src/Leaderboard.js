@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Pagination from './Pagination';
+import { listen } from './events.js';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -28,8 +29,19 @@ export default function Leaderboard() {
 // Leaderboard Button
 const [open, setOpen] = React.useState(false);
 
-// Fetch Leaderboard Data
-let [userdata, setUserdata] = React.useState([])
+// Fetch current game data
+const [currentdata, setCurrentData] = React.useState();
+listen("updateScores", (e) => {
+  setCurrentData(e
+    .sort((a, b) => {return (b[1] - a[1])})
+    .slice(0, 5)
+    .map((user) =>
+      <CurrentUser username={user[0]} rank={e.indexOf(user) + 1} points={user[1]} team={user[2]} />
+  ));
+})
+
+// Fetch All Leaderboard Data
+const [userdata, setUserdata] = React.useState([]);
 
   React.useEffect(() => {
     fetch('http://localhost:3001/leaderboard', {
@@ -41,20 +53,17 @@ let [userdata, setUserdata] = React.useState([])
       .then((response) => response.json())
       .then((users) => setUserdata(users));
   }, [open]);
-  console.log(userdata);
-  
+
   // Process and update data
   const [indexOfLastUser, setLastIdx] = React.useState(0);
   const [indexOfFirstUser, setFirstIdx] = React.useState(10);
-  const [topList, setTopList] = React.useState();
   const [searchlist, setSearchList] = React.useState();
 
   React.useEffect(() => {
-    let userlist = userdata.map((user) =>
-    <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} />
+    let expandedlist = userdata.map((user) =>
+      <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} games={user[2]} wins={user[3]} />
     );
-    setSearchList(userlist);
-    setTopList(userlist.slice(0, 5));
+    setSearchList(expandedlist);
   }, [userdata])
 
   // Search
@@ -63,7 +72,7 @@ let [userdata, setUserdata] = React.useState([])
       setSearchList(userdata
         .filter(user => user[1].toLowerCase().includes(query.toLowerCase()))
         .map((user) =>
-        <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} />));
+        <User username={user[1]} rank={userdata.indexOf(user) + 1} points={user[0]} games={user[2]} wins={user[3]} />));
     } else setSearchList(userdata)
   }
 
@@ -87,7 +96,7 @@ let [userdata, setUserdata] = React.useState([])
       <div className="minimized-container" style={minimizedStyle.container}>
         <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>
         <div>
-          {topList}
+          {currentdata}
         </div>   
       </div>
       {open && (
@@ -103,7 +112,33 @@ let [userdata, setUserdata] = React.useState([])
   )
 };
 
-const User = ({ rank, username, points}) => {
+const CurrentUser = ({ rank, username, points, team }) => {
+  return (
+    <div>
+      <Box component="span" sx={{ display: 'block',p: 1,
+          m: 1,
+          bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+          color: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+          border: '1px solid',
+          borderColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+          borderRadius: 2,
+          fontSize: '0.775rem',
+          fontWeight: '700'}}>
+          <table style={expandedStyle.table}>
+            <tr style={expandedStyle.row}> 
+            <td style={{color: team === 1 ? "Blue" : "Red"}}>{rank}</td>
+            <td style={{color: team === 1 ? "Blue" : "Red"}}>{username}</td>
+            <td style={{color: team === 1 ? "Blue" : "Red"}}>{points}</td>
+            </tr>
+          </table>
+      </Box>
+    </div>
+  )
+};
+
+const User = ({ rank, username, points, games, wins }) => {
   return (
     <div>
     <Box component="span" sx={{ display: 'block',p: 1,
@@ -122,9 +157,10 @@ const User = ({ rank, username, points}) => {
             <td style={expandedStyle.column}>{rank}</td>
             <td style={expandedStyle.column}>{username}</td>
             <td style={expandedStyle.column}>{points}</td>
+            <td style={expandedStyle.column}>{games}</td>
+            <td style={expandedStyle.column}>{wins}</td>
             </tr>
           </table>
-          
           </Box>
     </div>
   )
@@ -141,6 +177,12 @@ const ColumnHeader = () => {
       </div>
       <div className="col-score" style={expandedStyle.colpoints}>
         <div className="expanded-text" style={expandedStyle.coltext}>Points</div>
+      </div>
+      <div className="col-score" style={expandedStyle.colpoints}>
+        <div className="expanded-text" style={expandedStyle.coltext}>Games</div>
+      </div>
+      <div className="col-score" style={expandedStyle.colpoints}>
+        <div className="expanded-text" style={expandedStyle.coltext}>Wins</div>
       </div>
   </div>
   ) 

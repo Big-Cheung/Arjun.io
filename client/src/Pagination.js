@@ -33,14 +33,6 @@ const paginateStyle = {
     alignItems: "center",
     color: "black",
     float: "center",
-    // paddingTop: 8,
-    // paddingLeft: 12,
-    // paddingRight: 12,
-    // paddingBottom: 8,
-    // textDecoration: "none",
-    // borderWidth: 1,
-    // borderStyle: "solid",
-    // fontSize: 16,
   },
 }
 export default Pagination
