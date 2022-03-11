@@ -153,9 +153,9 @@ export default function Leaderboard() {
 const CurrentUser = ({ rank, username, points, team }) => {
   return (
     <tr style={expandedStyle.row}> 
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", fontSize: 15}}>{rank}</td>
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{username}</td>
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{points}</td>
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, fontSize: 15}}>{rank}</td>
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{username}</td>
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{points}</td>
     </tr>
   )
 };
