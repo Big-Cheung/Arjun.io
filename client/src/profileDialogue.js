@@ -16,7 +16,7 @@ const ProfileDialog = () => {
   var nullData = {user: "", wins: 0, points: 0, games: 0, model: 0, uid: ""};
   const [userData, setuserData] = React.useState(nullData);
   const [index, setIndex] = React.useState(0);
-  const models = ["Cylinder", "Chicken", "Sphere"];
+  const models = ["Cylinder", "Pipe", "Spaniard"];
   const [currVal, setCurrVal] = React.useState("");
   React.useEffect(() => {
     setuserData(read("userData"));
@@ -35,6 +35,16 @@ const ProfileDialog = () => {
     }
     else{
       setIndex(index - 1);
+    }
+    send("changeModel",index);
+    setCurrVal(models[index]);
+  }
+  const shiftRight = () => {
+    if(index + 1 >= models.length){
+      setIndex(0);
+    }
+    else{
+      setIndex(index + 1);
     }
     send("changeModel",index);
     setCurrVal(models[index]);
@@ -60,8 +70,8 @@ const ProfileDialog = () => {
           <IconButton color="primary" aria-label="upload picture" component="span" onClick={shiftLeft}>
           <FaAngleLeft />
   </IconButton>
-  <h3>{currVal}</h3>
-          <IconButton color="primary" aria-label="upload picture" component="span">
+  <h3 style={{width: 100, alignContent: "center"}}>{currVal}</h3>
+          <IconButton color="primary" aria-label="upload picture" component="span" onClick={shiftRight}>
           <FaAngleRight />
   </IconButton>
           </div>
