@@ -224,7 +224,7 @@ function stateSwitchLoop() {
         stateMap[state].end()
         state = 0;
         stateMap[state].start()
-        io.emit("clock",Date.now()+lobbyDuration,0);
+        io.emit("clock",Date.now()+lobbyDuration,0,Object.keys(players));
         setTimeout(()=> {
             if (state !=2) {
                 console.log("Game Started");
@@ -232,7 +232,7 @@ function stateSwitchLoop() {
                 state = 1;
                 stateMap[state].start()
                 setTimeout(stateSwitchLoop,gameDuration)
-                io.emit("clock",Date.now()+gameDuration,1);
+                io.emit("clock",Date.now()+gameDuration,1,Object.keys(players));
             } else {
                 state = 0;
             }
@@ -256,7 +256,7 @@ function initSocket(socket) {
     //run console log on connect
     let clippedData = {}
     for (var e in playerdata) {
-        clippedData[e] = [playerdata[e].user]
+        clippedData[e] = [playerdata[e].user,playerdata[e].model]
     }
     socket.emit('pdl',clippedData)
     socket.emit('pl',players)
@@ -284,7 +284,7 @@ function addPlayerData(data, socket) {
     console.log(data);
     playerdata[socket] = data;
     //Emits li method to all users telling them to update the other players.
-    io.emit("li",[socket, data.user])
+    io.emit("li",[socket, data.user, data.model])
 }
 
 function updateScore(points, datamapping) {

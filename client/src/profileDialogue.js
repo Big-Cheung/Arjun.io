@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 // import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import {FaAngleRight} from "react-icons/fa"
 import {FaAngleLeft} from "react-icons/fa"
-import { read, listen } from './events.js';
+import { read, listen, send } from './events.js';
 
 const ProfileDialog = () => {
   const [open, setOpen] = React.useState(false);
@@ -22,6 +22,7 @@ const ProfileDialog = () => {
     setuserData(read("userData"));
     setIndex((read("userData")).model);
   },[]);
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -35,6 +36,7 @@ const ProfileDialog = () => {
     else{
       setIndex(index - 1);
     }
+    send("changeModel",index);
     setCurrVal(models[index]);
   }
   return (

@@ -3,23 +3,20 @@ import { Group, Vector3 } from "three"
 import { Text } from "troika-three-text"
 import { io } from 'socket.io-client'
 import { listen, post, read, send } from "./events.js"
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { string } from "prop-types"
 
-
-
-
-
-/*const loader = new GLTFLoader();    
-loader.load("./assets/cat.glb",
+const loader = new GLTFLoader(); 
+loader.load("./assets/spaniard_1color.glb",
     (gltf) => {
-        gltf.scene.children[0].geometry.scale(0.05,0.05,0.05)
-        geometry = gltf.scene.children[0].geometry;
+        models["2"] = gltf.scene.children[0].geometry;
+        updateModels();
     },
     (xhr) => {
-        console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
     },
     (error) => {
         console.log(error.message)
-})*/
+})
 
 //game globals
 let state = 0;
@@ -30,6 +27,18 @@ let playerdata = {}
 let player;
 let needsUpdate = false;
 const keys = [false,false,false,false,false]
+
+//player models
+let models = {
+    ["0"]:new three.CylinderGeometry(0.5,0.5,1),
+    ["1"]:new three.CylinderGeometry(0.5,0.5,10),
+}
+
+const teamColors = [
+    0x888888,
+    0x990099,
+    0x009999
+]
 
 //socket globals
 var socket;
@@ -51,17 +60,9 @@ const MIN_X = -15
 const MAX_X = 15
 const MIN_Z = -15
 const MAX_Z = 15
-//player loads
-var geometry = new three.CylinderGeometry(0.5,0.5);
-const playerMat = new three.MeshLambertMaterial( { color: 0x0000ff } );
-const otherMat = new three.MeshLambertMaterial( { color: 0x1166ff } );
-const infectedMat = new three.MeshBasicMaterial( { color: 0xff0000 } );
 
-const teamColors = [
-    0x008800,
-    0x0000ff,
-    0xff0000
-]
+//Players
+const otherModels = {};
 
 //utils
 const keyMap = {
@@ -72,10 +73,11 @@ const keyMap = {
     "p":4,
 }
 
+
 class PlayerModel {
-    constructor(name,color) {
+    constructor(name,color,model="0") {
         this.material = new three.MeshLambertMaterial( { color: color } ); 
-        this.body = new three.Mesh(geometry, this.material);
+        this.body =  new three.Mesh(models[model], this.material);
         this.group = new Group();
         this.tag = new Text();
         this.tag.text = name;
@@ -91,8 +93,6 @@ class PlayerModel {
 
     dispose() {
         this.tag.dispose();
-        this.body.dispose();
-        this.group.dispose();
         this.material.dispose();
     }
 
@@ -100,16 +100,21 @@ class PlayerModel {
         this.material.color.setHex(color)
     }
 
+    changeModel(newGeometry) {
+        this.body.geometry = newGeometry;
+    }
+
     update() {
         this.tag.quaternion.copy(statics.camera.quaternion);
+        this.body.rotation.y += 0.01
     }
 }
 
 class OtherPlayer {
     //Constructory/Destructor
-    constructor(name,pos=[0,0,0]) {
+    constructor(name,pos=[0,0,0],model="0") {
         this.name = name;
-        this.obj = new PlayerModel(name,0x008800);
+        this.obj = new PlayerModel(name,0x008800,model);
         this.position = new Vector3(...pos);
     }
 
@@ -122,20 +127,19 @@ class OtherPlayer {
     update() {
         this.obj.group.position.lerp(this.position,lerpspeed);
         this.obj.update();
+        
     }
 }
 
 class Player {
     //Constructor/Destructor
-    constructor(name) {
+    constructor(name,model="0") {
         this.name = name;
-        this.obj = new PlayerModel(this.name,0x008800);
+        this.obj = new PlayerModel(this.name,0x008800,model);
         this.position = new Vector3(0,0,4);
         targetObj = this.obj.group.position;
         statics.camera.zoom = 2;
         statics.camera.updateProjectionMatrix();
-
-        
         document.addEventListener("keydown", this.keyDown)
         document.addEventListener("keyup", this.keyUp)
     }
@@ -194,6 +198,13 @@ function initSockets() {
 
     post("socketid",socketID);
 
+    listen("changeModel",(model) => {
+        playerdata[socketID][1] = model.toString();
+        if (model.toString() in models && player) {
+            player.obj.changeModel(models[model.toString()]);
+        }
+    })
+
     //Player data list
     socket.on("pdl",(e) => {
         playerdata = e;
@@ -202,12 +213,14 @@ function initSockets() {
     socket.on("pl",(e) => {
         for (var el in e) {
             let name = e[el]["name"]
+            let model = "0"
             if (el in playerdata) {
-                name = playerdata[el];
+                name = playerdata[el][0];
+                model = playerdata[el][1];
             }
-            others[el] = new OtherPlayer(name,e[el]["position"]);
+            others[el] = new OtherPlayer(name,e[el]["position"],model);
             others[el].obj.changeColor(teamColors[e[el]["team"]]);
-            statics.scene.add(others[el].obj.group);
+            statics.othersgroup.add(others[el].obj.group);
         }
     })
 
@@ -215,21 +228,33 @@ function initSockets() {
     socket.on("gj", (e) => {
         console.log("got game join");
         let name = "Guest" + Math.floor(Math.random() * 10000)
+        let model = "0"
         if (socketID in playerdata) {
-            name = playerdata[socketID]
+            name = playerdata[socketID][0]
+            if (playerdata[socketID][1] in models) {
+                model = playerdata[socketID][1];
+            }
         }
-        player = new Player(name);
+        player = new Player(name,model);
         statics.scene.add( player.obj.group );
         socket.emit("j",name);
     })
 
     socket.on("li", (e) => {
-        playerdata[e[0]] = e[1];
+        e[2] = e[2].toString();
+        playerdata[e[0]] = [e[1],e[2]];
         if (player && e[0] == socketID) {
+            player.name = e[1];
             player.obj.tag.text = e[1];
+            if (e[2] in models) {
+                player.obj.changeModel(models[e[2]]);
+            }
         }
         if (e[0] in others) {
             others[e[0]].obj.tag.text = e[1];
+            if (string(e[2]) in models) {
+                player.obj.changeModel(models[e[2]]);
+            }
         }
     })
 
@@ -260,16 +285,16 @@ function initSockets() {
     socket.on("j",(e) =>{
         console.log("Player " + e[1] + " joined")
         others[e[0]] = new OtherPlayer(e[1]);
-        statics.scene.add(others[e[0]].obj.group);
+        others[e[0]].obj.group.socket = e[0];
+        statics.othersgroup.add(others[e[0]].obj.group);
     })
 
     //Leave
     socket.on("l",(e) => {
         console.log("Player left")
-        statics.scene.remove(others[e].obj.group);
+        statics.othersgroup.remove(others[e].obj.group);
         others[e].destroy();
         delete others[e];
-        console.log(Object.keys(others));   
     })
 
     //Update
@@ -306,8 +331,27 @@ function initSockets() {
     })
 
     socket.on("clock",(time,state) => {
+        for (var obj in statics.othersgroup.children) {
+            if (statics.othersgroup.children[obj].socket in others) {
+                continue;
+            }
+            statics.othersgroup.remove(obj);
+        }
         send("endTime",[time,state]);
+        console.log("clock");
     })
+}
+
+function updateModels(loadedModel) {
+    for (var id in playerdata) {
+        if (playerdata[id][1] == loadedModel) {
+            if (id == socketID && player) {
+                player.obj.changeModel(models[loadedModel]);
+            } else {
+                others[id].obj.changeModel(models[loadedModel]);
+            }
+        }
+    }
 }
 
 function bound(value, min, max) {
@@ -344,6 +388,8 @@ export default function main() {
     statics.renderer = new three.WebGLRenderer({antialias:true});
     statics.renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( statics.renderer.domElement );
+    statics.othersgroup = new Group();
+    statics.scene.add(statics.othersgroup);
 
     const loader = new three.CubeTextureLoader();
     const texture = loader.load([
