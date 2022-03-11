@@ -17,12 +17,15 @@ function getTimerText(timeLeft) {
   return (minutes > 9 ? minutes : '0' + minutes) + ':' + (seconds > 9 ? seconds : '0' + seconds);
 }
 
+function endCurrentTimer() {
+}
+
 function timerLoop(endTime,func,stopfunc) {
   let times = getTimeLeft(endTime);
-  console.log(endTime);
   if (times[0] > 0) {
     func(getTimerText(times));
-    setTimeout(() => (timerLoop(endTime,func,stopfunc)),times[0]%1000);
+    let tm = setTimeout(() => (timerLoop(endTime,func,stopfunc)),times[0]%1000);
+    endCurrentTimer = () => (clearTimeout(tm));
   } else {
     stopfunc(false)
   }
@@ -41,6 +44,7 @@ const GameTimer = () => {
       setEnd(args[0]);
       setGameState(args[1]);
       setGameTimer(true);
+      endCurrentTimer();
       setTimer(getTimerText(getTimeLeft(args[0])))
       timerLoop(args[0],setTimer,setGameTimer);
   })}, [])
@@ -51,7 +55,6 @@ const GameTimer = () => {
       if (e === 0) setWinner("Tie Game!")
       else if (e === 1) setWinner("Purple Team Wins!")
       else setWinner("Blue Team Wins!")
-      console.log(e);
   })}, [])
 
   return (

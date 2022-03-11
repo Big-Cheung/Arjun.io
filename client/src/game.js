@@ -153,7 +153,6 @@ class OtherPlayer {
 
     destroy() {
         this.obj.dispose();
-        this.position.dispose();
     }
 
     //Methods
@@ -286,8 +285,8 @@ function initSockets() {
         }
         if (e[0] in others) {
             others[e[0]].obj.tag.text = e[1];
-            if (string(e[2]) in models) {
-                player.obj.changeModel(models[e[2]]);
+            if (e[2] in models) {
+                others[e[0]].obj.changeModel(models[e[2]]);
             }
         }
     })
@@ -375,12 +374,6 @@ function initSockets() {
 
     //Clock event
     socket.on("clock",(time,state) => {
-        for (var obj in statics.othersgroup.children) {
-            if (statics.othersgroup.children[obj].socket in others) {
-                continue;
-            }
-            statics.othersgroup.remove(obj);
-        }
         send("endTime",[time,state]);
     })
 }

@@ -114,7 +114,7 @@ const stateMap = [
                 
         },
         'start':()=>{
-            setTeam = Math.floor(Math.random()*2);
+            setTeam = 1+Math.floor(Math.min(Math.random()*2,1.99));
             let shuffled = shuffle(Object.keys(players));
             for (var e of shuffled) {
                 players[e]["team"] = setTeam;
