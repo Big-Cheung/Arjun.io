@@ -7,7 +7,7 @@ Charlie Kuoch
 Ishaan Mody
 
 ## In order to run:
-### In home, 'Arjun.io' directory:
+### 1st step: In home, 'Arjun.io' directory:
 ### `npm install`
 
     Installs necessary packages on the server side
@@ -15,20 +15,26 @@ Ishaan Mody
 
 ### `npm start`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the local server
+(output in console will be various server calls
+about game status)
 
-### `npm run build`
+## 2nd step: go to 'client' directory:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `cd client`
+Goes to client directory
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 3rd step: In 'client' directory:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `npm install`
 
-### `npm run eject`
+    Installs necessary packages on the client side
+    (output in console will once again be various packages)
+
+### `npm start`
+
+Launches app in localhost:3000
+Please navigate to this page to play the game
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
