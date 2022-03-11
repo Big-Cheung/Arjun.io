@@ -15,7 +15,9 @@ const ProfileDialog = () => {
   const [open, setOpen] = React.useState(false);
   var nullData = {user: "", wins: 0, points: 0, games: 0, model: 0, uid: ""};
   const [userData, setuserData] = React.useState(nullData);
-  listen("login",(e)=>{setuserData(e)});
+  React.useEffect(() => {
+    setuserData(read("userData"));
+  },[]);
   const handleOpen = () => {
     setOpen(true);
   };

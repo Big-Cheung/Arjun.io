@@ -199,7 +199,11 @@ class Login extends React.Component {
     super(props);
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleLogoutClick = this.handleLogoutClick.bind(this);
-    this.state = {buttonIsPressed: false, LoginDialog: false, SignUpDialog: false, isLoggedIn: false};
+    this.state = {buttonIsPressed: false, LoginDialog: false, SignUpDialog: false, isLoggedIn: false, userEntered: false};
+    listen("login",(e)=>{
+      console.log("I got the login event as login.js!");
+      this.setState({userEntered: true})
+    });
   }
   handleLoginClick() {
     if(this.buttonIsPressed)
@@ -235,6 +239,8 @@ class Login extends React.Component {
     const isLoggedIn = this.state.isLoggedIn;
     const LoginDialog = this.state.LoginDialog;
     const SignUpDialog = this.state.SignUpDialog;
+    const userEntered = this.state.userEntered;
+    console.log("userEntered = ", userEntered);
     let button;
     if (!isLoggedIn)
     {
@@ -244,12 +250,13 @@ class Login extends React.Component {
     
     <Button variant="outlined" 
               color="secondary" onClick={() => this.handleClick(0)} style={cardStyles.container}>
-        Guest
+        {userEntered ? <text>Menu</text> : <text>Guest</text>}
       </Button>
     <div className="drop1">
       {buttonIsPressed? <div style={cardStyles.content}> 
       <LoginDialogue /> 
       <SignUpDialogue />
+      {userEntered ? <ProfileDialogue /> : <div></div>}
        </div>
       : <div><span></span></div>}
       
