@@ -15,3 +15,10 @@
     background: #f0f0f0;
   }
   
+  tr:nth-child(even) {
+    background-color: rgb(66, 141, 211);
+  }
+
+  th {
+    text-align:left;
+  }

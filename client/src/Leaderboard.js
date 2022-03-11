@@ -94,93 +94,83 @@ export default function Leaderboard() {
       <div className="minimized-container" style={minimizedStyle.container}>
         <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>
         <div>
+          <table>
           {currentdata}
+          </table>
         </div>   
       </div>
       {open && (
         <div className="expanded-container" style={expandedStyle.container}>
           <div className="expanded-header" style={expandedStyle.header}>Leaderboard</div>
           <TextField type="text" margin="dense" placeholder="Search..." style={minimizedStyle.points} onChange={event => {searchData(event.target.value)}}/>
-          <ColumnHeader/>
-          {sliceSearchList(searchlist, indexOfLastUser, indexOfFirstUser)}
-          <Pagination usersPerPage={usersPerPage} totalUsers={searchlist.length} paginate={paginate}/>
+          
+          <div style={{padding: 5}}>
+            <table style={
+              {    
+                border: "1px solid black",
+                borderCollapse: "collapse",
+              }} width="100%">
+                  <colgroup>
+                    <col span="1" style={{width: "5%"}}/>
+                    <col span="1" style={{width: "50%"}}/>
+                    <col span="1" style={{width: "15%"}}/>                    
+                    <col span="1" style={{width: "15%"}}/>
+                    <col span="1" style={{width: "15%"}}/>
+                  </colgroup>
+                <tbody>
+                  <tr style={
+                  {    
+                    border: "1px solid black",
+                    borderCollapse: "collapse",
+                                }}>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Points</th>
+                    <th>Games</th>
+                    <th>Wins</th>
+                  </tr>
+                  {sliceSearchList(searchlist, indexOfLastUser, indexOfFirstUser)}  
+                </tbody>
+            </table> 
+            <div style={{paddingTop: 5}}>
+              <Pagination usersPerPage={usersPerPage} totalUsers={searchlist.length} paginate={paginate} style={expandedStyle.paginate}/>
+            </div>
+          </div>  
         </div>
       )}
     </React.Fragment>   
   )
 };
 
-const CurrentUser = ({ rank, username, points, team }) => {
-  return (
-    <div>
-      <Box component="span" sx={{ display: 'block',p: 1,
+/*      <Box component="span" sx={{ display: 'block',p: 1,
           m: 1,
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
           color: (theme) =>
             theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
           fontSize: '0.775rem',
-          fontWeight: '700'}}>
-          <table style={expandedStyle.table}>
-            <tr style={expandedStyle.row}> 
-            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", fontSize: 15}}>{rank}</td>
-            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{username}</td>
-            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{points}</td>
-            </tr>
-          </table>
-      </Box>
-    </div>
+          fontWeight: '700'}}>*/
+
+const CurrentUser = ({ rank, username, points, team }) => {
+  return (
+    <tr style={expandedStyle.row}> 
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", fontSize: 15}}>{rank}</td>
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{username}</td>
+      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{points}</td>
+    </tr>
   )
 };
 
 const User = ({ rank, username, points, games, wins }) => {
-  return (
-    <div>
-    <Box component="span" sx={{ display: 'block',p: 1,
-          m: 1,
-          bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-          color: (theme) =>
-            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-          border: '1px solid',
-          borderColor: (theme) =>
-            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-          borderRadius: 2,
-          fontSize: '0.775rem',
-          fontWeight: '700'}}>
-          <table style={expandedStyle.table}>
-            <tr style={expandedStyle.row}> 
-            <td style={expandedStyle.column}>{rank}</td>
-            <td style={expandedStyle.column}>{username}</td>
-            <td style={expandedStyle.column}>{points}</td>
-            <td style={expandedStyle.column}>{games}</td>
-            <td style={expandedStyle.column}>{wins}</td>
-            </tr>
-          </table>
-          </Box>
-    </div>
+  return (   
+    <tr style={expandedStyle.row}> 
+      <td style={expandedStyle.column}>{rank}</td>
+      <td style={expandedStyle.column}>{username}</td>
+      <td style={expandedStyle.column}>{points}</td>
+      <td style={expandedStyle.column}>{games}</td>
+      <td style={expandedStyle.column}>{wins}</td>
+    </tr>  
   )
 };
-
-const ColumnHeader = () => {
-  return(
-    <div className="col-header" style={expandedStyle.colheader}>
-      <div className="col-rank" style={expandedStyle.colrank}>
-        <div className="expanded-text" style={expandedStyle.coltext}>#</div>
-      </div>
-      <div className="col-name" style={expandedStyle.colname}>
-        <div className="expanded-text" style={expandedStyle.coltext}>Name</div>
-      </div>
-      <div className="col-score" style={expandedStyle.colpoints}>
-        <div className="expanded-text" style={expandedStyle.coltext}>Points</div>
-      </div>
-      <div className="col-score" style={expandedStyle.colpoints}>
-        <div className="expanded-text" style={expandedStyle.coltext}>Games</div>
-      </div>
-      <div className="col-score" style={expandedStyle.colpoints}>
-        <div className="expanded-text" style={expandedStyle.coltext}>Wins</div>
-      </div>
-  </div>
-  ) 
-}
 
 const minimizedStyle = {
   container: {
@@ -221,13 +211,14 @@ const minimizedStyle = {
   },
   points: {
     paddingLeft: 5,
+    paddingRight: 5,
+    width: "100%",
   },
   
 };
 
 const expandedStyle = {
   container: {
-    
     width: 400,
     margin: "auto",
     top: 100,
@@ -260,14 +251,20 @@ const expandedStyle = {
     paddingLeft: 5,
   },
   colname: {
-    paddingLeft: 5,
+    paddingLeft: 20,
   },
   colpoints: {
-    paddingLeft: 5,
+    paddingLeft: 20,
+  },
+  colgames: {
+    paddingLeft: 20,
+  },
+  colwins: {
+    paddingLeft: 20,
   },
   coltext: {
     fontSize: 20,
-    fontFamily: "Roboto"
+    fontFamily: "Monaco, monospace",
   },
   table: {
     display: "flex",
@@ -277,5 +274,9 @@ const expandedStyle = {
   },
   row: {
     alignItems: "left",
+    background: "transparent"
+  },
+  paginate: {
+    paddingTop: 5,
   }
 }
