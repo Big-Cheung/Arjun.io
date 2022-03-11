@@ -29,25 +29,27 @@ function timerLoop(endTime,func,stopfunc) {
 }
 
 const GameTimer = () => {
-    const [GameTimer, setGameTimer] = React.useState(false);
-    const [timer, setTimer] = React.useState('00:00');
-    const [end, setEnd] = React.useState();
+  const [GameTimer, setGameTimer] = React.useState(false);
+  const [timer, setTimer] = React.useState('00:00');
+  const [gameState, setGameState] = React.useState(0);
+  const [end, setEnd] = React.useState();
 
-    React.useEffect(()=>{
-      listen("endTime", (args) => {
-        console.log("got time as ",args[0]);
-        setEnd(args[0]);
-        setGameTimer(true);
-        setTimer(getTimerText(getTimeLeft(args[0])))
-        timerLoop(args[0],setTimer,setGameTimer);
-    })},[])
+  React.useEffect(()=>{
+    listen("endTime", (args) => {
+      setEnd(args[0]);
+      setGameState(args[1]);
+      setGameTimer(true);
+      setTimer(getTimerText(getTimeLeft(args[0])))
+      timerLoop(args[0],setTimer,setGameTimer);
+  })},[])
 
-    return (
-      <div style = {cardStyles.container}>
-        <div style = {cardStyles.timer}>{GameTimer ? timer : ""}</div>
-      </div>
-    );
+  return (
+    <div>
+      <h1 style = {cardStyles.timer}>{GameTimer ? (timer + " until " + (gameState == 0 ? "game starts!" : "game ends!")) : ""} </h1>
+    </div>
+  );
 }
+
 const cardStyles = {
     container: {
       position: "fixed",
