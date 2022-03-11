@@ -135,8 +135,8 @@ class Player {
     //Constructor/Destructor
     constructor(name,model="0") {
         this.name = name;
-        this.obj = new PlayerModel(this.name,0x008800,model);
-        this.position = new Vector3(0,0,4);
+        this.obj = new PlayerModel(this.name,0x888888,model);
+        this.position = new Vector3(0,0,0);
         targetObj = this.obj.group.position;
         statics.camera.zoom = 2;
         statics.camera.updateProjectionMatrix();
@@ -203,6 +203,8 @@ function initSockets() {
         if (model.toString() in models && player) {
             player.obj.changeModel(models[model.toString()]);
         }
+        var mod = model;
+        socket.emit("mu",mod);
     })
 
     //Player data list
@@ -226,7 +228,6 @@ function initSockets() {
 
     //Game join
     socket.on("gj", (e) => {
-        console.log("got game join");
         let name = "Guest" + Math.floor(Math.random() * 10000)
         let model = "0"
         if (socketID in playerdata) {
@@ -330,6 +331,16 @@ function initSockets() {
         send("updateScores",scores);
     })
 
+    //Model update
+    socket.on("mu",(id,model) => {
+
+        playerdata[id][1] = model.toString();
+        if (model.toString() in models && id in others) {
+            others[id].obj.changeModel(models[model.toString()]);
+        }
+    })
+
+    //Clock event
     socket.on("clock",(time,state) => {
         for (var obj in statics.othersgroup.children) {
             if (statics.othersgroup.children[obj].socket in others) {
@@ -338,7 +349,6 @@ function initSockets() {
             statics.othersgroup.remove(obj);
         }
         send("endTime",[time,state]);
-        console.log("clock");
     })
 }
 
