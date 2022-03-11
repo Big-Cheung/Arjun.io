@@ -33,7 +33,9 @@ const GameTimer = () => {
   const [timer, setTimer] = React.useState('00:00');
   const [gameState, setGameState] = React.useState(0);
   const [end, setEnd] = React.useState();
+  const [winner, setWinner] = React.useState();
 
+  // Timer
   React.useEffect(()=>{
     listen("endTime", (args) => {
       setEnd(args[0]);
@@ -41,11 +43,31 @@ const GameTimer = () => {
       setGameTimer(true);
       setTimer(getTimerText(getTimeLeft(args[0])))
       timerLoop(args[0],setTimer,setGameTimer);
-  })},[])
+  })}, [])
+
+  // Display Winner
+  React.useEffect(()=>{
+    listen("gameOver", (e) => {
+      if (e === 0) setWinner("Tie Game!")
+      else if (e === 1) setWinner("Purple Team Wins!")
+      else setWinner("Blue Team Wins!")
+      console.log(e);
+  })}, [])
 
   return (
     <div style = {cardStyles.container}>
-      <div style = {cardStyles.timer}>{GameTimer ? (timer + " until " + (gameState == 0 ? "game starts!" : "game ends!")) : ""} </div>
+      <div style = {cardStyles.timer}>{GameTimer ? (timer + " Until Game " + (gameState == 0 ? "Starts!" : "Ends!")) : ""} </div>
+      {(gameState === 0) &&
+        <div style={{
+          color: winner === "Purple Team Wins" ? "purple" : winner === "Blue Team Wins!" ? "blue" : "white",
+          textAlign: "center",
+          fontSize: 30,
+          fontWeight: "bold",
+          fontFamily: "Consolas",
+        }}>
+          {winner}
+        </div>
+      } 
     </div>
   );
 }
@@ -57,13 +79,14 @@ const cardStyles = {
       left: 0,
       right: 0,
       top: 5,
-      width: 500,
+      width: 700,
     },
     timer:{
       color: 'white',
       textAlign: "center",
       fontSize: 40,
-      fontWeight: "bold"
+      fontWeight: "bold",
+      fontFamily: "Consolas"
     },
     lobby:{
       color:'white'
