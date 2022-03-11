@@ -4,61 +4,42 @@ import { listen } from './events.js';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 export default function Leaderboard() {
-  const theme = createMuiTheme({
-    overrides: {
-      MuiCssBaseline: {
-        "@global": {
-          "*::-webkit-scrollbar": {
-            width: "10px"
-          },
-          "*::-webkit-scrollbar-track": {
-            background: "#E4EFEF"
-          },
-          "*::-webkit-scrollbar-thumb": {
-            background: "#1D388F61",
-            borderRadius: "2px"
-          }
-        }
+
+  // Leaderboard Button
+  const [open, setOpen] = React.useState(false);
+
+  // Fetch current game data
+  const [currentdata, setCurrentData] = React.useState();
+  React.useEffect(() => {
+    listen("updateScores", (e) => { 
+      setCurrentData(getMax(e)
+        .map((user) =>
+          <CurrentUser username={user[0]} rank={e.indexOf(user) + 1} points={user[1]} team={user[2]} />
+      ));
+    })
+  }, []);
+
+  // O(N) find current top 5 players
+  function getMax(array) {
+    if (array.length <= 5) {
+      return array.sort((a, b) => {return b[1] - a[1]});
+    }
+    let max = array.slice(0, 5);
+    max.sort((a, b) => {return b[1] - a[1]});
+
+    for (let i = 5; i < array.length; i++) {
+      if (array[i][1] > max[4][1]) {
+        max[0] = array[i];
+        max.sort((a, b) => {return b[1] - a[1]});
       }
     }
-  });
-
-// Leaderboard Button
-const [open, setOpen] = React.useState(false);
-
-// Fetch current game data
-const [currentdata, setCurrentData] = React.useState();
-React.useEffect(() => {
-  listen("updateScores", (e) => { 
-    setCurrentData(getMax(e)
-      .map((user) =>
-        <CurrentUser username={user[0]} rank={e.indexOf(user) + 1} points={user[1]} team={user[2]} />
-    ));
-  })
-}, []);
-
-// O(N) find current top 5 players
-function getMax(array) {
-  if (array.length <= 5) {
-    return array.sort((a, b) => {return b[1] - a[1]});
+    return max;
   }
-  let max = array.slice(0, 5);
-  max.sort((a, b) => {return b[1] - a[1]});
 
-  for (let i = 5; i < array.length; i++) {
-    if (array[i][1] > max[4][1]) {
-      max[0] = array[i];
-      max.sort((a, b) => {return b[1] - a[1]});
-    }
-  }
-  return max;
-}
-
-// Fetch All Leaderboard Data
-const [userdata, setUserdata] = React.useState([]);
+  // Fetch All Leaderboard Data
+  const [userdata, setUserdata] = React.useState([]);
 
   React.useEffect(() => {
     fetch('http://localhost:3001/leaderboard', {
@@ -137,17 +118,13 @@ const CurrentUser = ({ rank, username, points, team }) => {
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
           color: (theme) =>
             theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-          border: '1px solid',
-          borderColor: (theme) =>
-            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-          borderRadius: 2,
           fontSize: '0.775rem',
           fontWeight: '700'}}>
           <table style={expandedStyle.table}>
             <tr style={expandedStyle.row}> 
-            <td style={{color: team === 1 ? "Blue" : "Red"}}>{rank}</td>
-            <td style={{color: team === 1 ? "Blue" : "Red"}}>{username}</td>
-            <td style={{color: team === 1 ? "Blue" : "Red"}}>{points}</td>
+            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", fontSize: 15}}>{rank}</td>
+            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{username}</td>
+            <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingLeft: 10, fontSize: 15}}>{points}</td>
             </tr>
           </table>
       </Box>
@@ -256,9 +233,11 @@ const expandedStyle = {
     top: 100,
     backgroundColor: "rgb(113, 183, 227)",
     position: "fixed",
-    top: "20px",
-    right: "37%",
-
+    top: 100,
+    left: 0,
+    right: 0,
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   header: {
     fontWeight: "bold",
