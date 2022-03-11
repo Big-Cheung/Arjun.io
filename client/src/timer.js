@@ -44,8 +44,8 @@ const GameTimer = () => {
   })},[])
 
   return (
-    <div>
-      <h1 style = {cardStyles.timer}>{GameTimer ? (timer + " until " + (gameState == 0 ? "game starts!" : "game ends!")) : ""} </h1>
+    <div style = {cardStyles.container}>
+      <div style = {cardStyles.timer}>{GameTimer ? (timer + " until " + (gameState == 0 ? "game starts!" : "game ends!")) : ""} </div>
     </div>
   );
 }
@@ -57,12 +57,13 @@ const cardStyles = {
       left: 0,
       right: 0,
       top: 5,
-      width: 100,
+      width: 500,
     },
     timer:{
       color: 'white',
       textAlign: "center",
       fontSize: 40,
+      fontWeight: "bold"
     },
     lobby:{
       color:'white'
