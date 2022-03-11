@@ -1,20 +1,19 @@
-# Getting Started with Create React App
+# Arjun.io README
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Authors:
+Evan Cheung
+Joon Shin
+Charlie Kuoch
+Ishaan Mody
 
-## Available Scripts
+## In order to run:
+### In home, 'Arjun.io' directory:
+### `npm install`
 
-In the project directory, you can run:
+    Installs necessary packages on the server side
+    (output in console will be various packages)
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.

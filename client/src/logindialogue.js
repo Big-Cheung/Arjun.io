@@ -79,7 +79,7 @@ const LoginDialog = () => {
         </DialogTitle>
         <DialogContent>
         <DialogContentText>
-            Please enter your email and poassword
+            Please enter your email and password
           </DialogContentText>
         <TextField
             autoFocus
