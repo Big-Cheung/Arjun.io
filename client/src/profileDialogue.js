@@ -15,8 +15,12 @@ const ProfileDialog = () => {
   const [open, setOpen] = React.useState(false);
   var nullData = {user: "", wins: 0, points: 0, games: 0, model: 0, uid: ""};
   const [userData, setuserData] = React.useState(nullData);
+  const [index, setIndex] = React.useState(0);
+  const models = ["Cylinder", "Chicken", "Sphere"];
+  const [currVal, setCurrVal] = React.useState("");
   React.useEffect(() => {
     setuserData(read("userData"));
+    setIndex((read("userData")).model);
   },[]);
   const handleOpen = () => {
     setOpen(true);
@@ -24,7 +28,15 @@ const ProfileDialog = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  
+  const shiftLeft = () => {
+    if(index - 1 < 0){
+      setIndex(models.length - 1);
+    }
+    else{
+      setIndex(index - 1);
+    }
+    setCurrVal(models[index]);
+  }
   return (
     <div>
       <Button variant="outlined" 
@@ -42,10 +54,11 @@ const ProfileDialog = () => {
           <h1>Wins: {userData.wins}</h1>
           <h1>Games played: {userData.games}</h1>
           <h1>Points: {userData.points}</h1>
-          <div>
-          <IconButton color="primary" aria-label="upload picture" component="span">
+          <div style={{display: "flex"}}>
+          <IconButton color="primary" aria-label="upload picture" component="span" onClick={shiftLeft}>
           <FaAngleLeft />
   </IconButton>
+  <h3>{currVal}</h3>
           <IconButton color="primary" aria-label="upload picture" component="span">
           <FaAngleRight />
   </IconButton>
