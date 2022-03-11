@@ -16,8 +16,7 @@ const ProfileDialog = () => {
   var nullData = {user: "", wins: 0, points: 0, games: 0, model: 0, uid: ""};
   const [userData, setuserData] = React.useState(nullData);
   const [index, setIndex] = React.useState(0);
-  const models = ["Cylinder", "Pipe", "Spaniard"];
-  const [currVal, setCurrVal] = React.useState("");
+  const models = ["The Classic", "Sphere", "Spaniard", "Bottom Heavy", "Formation", "Lamp."];
   React.useEffect(() => {
     setuserData(read("userData"));
     setIndex((read("userData")).model);
@@ -32,22 +31,23 @@ const ProfileDialog = () => {
   const shiftLeft = () => {
     if(index - 1 < 0){
       setIndex(models.length - 1);
+      send("changeModel",models.length-1);
     }
     else{
       setIndex(index - 1);
+      send("changeModel",index -1);
     }
-    send("changeModel",index);
-    setCurrVal(models[index]);
+    
   }
   const shiftRight = () => {
     if(index + 1 >= models.length){
       setIndex(0);
+      send("changeModel",0);
     }
     else{
       setIndex(index + 1);
+      send("changeModel",index+1);
     }
-    send("changeModel",index);
-    setCurrVal(models[index]);
   }
   return (
     <div>
@@ -70,7 +70,7 @@ const ProfileDialog = () => {
           <IconButton color="primary" aria-label="upload picture" component="span" onClick={shiftLeft}>
           <FaAngleLeft />
   </IconButton>
-  <h3 style={{width: 100, alignContent: "center"}}>{currVal}</h3>
+  <h3 style={{width: 100, alignContent: "center"}}>{models[index]}</h3>
           <IconButton color="primary" aria-label="upload picture" component="span" onClick={shiftRight}>
           <FaAngleRight />
   </IconButton>

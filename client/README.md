@@ -15,9 +15,7 @@ Ishaan Mody
 
 ### `npm start`
 
-Launches the local server
-(output in console will be various server calls
-about game status)
+Launches the local server. This is the backend to the client you set up in step 3.
 
 ## 2nd step: go to 'client' directory:
 
@@ -33,7 +31,7 @@ Goes to client directory
 
 ### `npm start`
 
-Launches app in localhost:3000
+Launches client side app in localhost:3000.
 Please navigate to this page to play the game
 
 ## To exit:

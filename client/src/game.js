@@ -64,7 +64,7 @@ const keys = [false,false,false,false,false]
 //player models
 let models = {
     ["0"]:new three.CylinderGeometry(0.5,0.5,1),
-    ["1"]:new three.CylinderGeometry(0.5,0.5,10),
+    ["1"]:new three.SphereGeometry(0.5,8,8),
 }
 
 const teamColors = [
