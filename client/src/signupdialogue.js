@@ -105,6 +105,9 @@ const SignUpDialog = () => {
             type="username"
             fullWidth
             variant="standard"
+            inputProps={{
+              maxLength: 20,
+            }}
             onChange={(e) => {
               setUser(e.target.value);
             }}
