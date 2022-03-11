@@ -31,8 +31,6 @@ setUpdateFunction((points,mapping) => {
         mapping[socketid]["points"] += points[socketid]["points"]
         mapping[socketid]["wins"] += points[socketid]["wins"]
         mapping[socketid]["games"] += points[socketid]["games"]
-        console.log("updating points for " + socketid);
-        console.log(mapping[socketid]);
         updateUserData(uid,mapping[socketid]);
     }
 });
@@ -60,7 +58,6 @@ app.get("/leaderboard", (req, res) => {
 });
 
 app.use("/login", (req, res) => {
-    console.log(req.body)
     attemptLogin(req.body[0],req.body[1])
     .then((data) =>{
         if (data.status == "success") {
@@ -68,14 +65,12 @@ app.use("/login", (req, res) => {
             delete data.status
             addPlayerData(data,req.body[2]);
         } else {
-            console.log(data);
             res.send(data);
         }
     })
 });
 
 app.use("/signup", (req, res) => {
-    console.log(req.body)
     attemptSignup(req.body[0],req.body[1],req.body[2])
     .then((data) =>{
         if (data.status == "success") {

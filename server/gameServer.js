@@ -145,7 +145,7 @@ const stateMap = [
 
             updateScore(pointsObj, playerdata)
 
-            io.emit("ge",players,teamTotal != 0 ? (teamTotal > 0 ? 1 : 2) : 0);
+            io.emit("ge",players,teamTotal);
         },
     }
 ]
@@ -276,12 +276,16 @@ function initSocket(socket) {
     socket.on('disconnect', function() {
         stateMap[state]['disconnect'](socket);
     });
+
+    //Model Update
+    socket.on('mu',function(args) {
+        playerdata[socket.id]['model'] = args;
+        socket.broadcast.emit('mu',socket.id,args)
+    });
 }
 
 //Database methods
 function addPlayerData(data, socket) {
-    console.log("Added data at socket " + socket)
-    console.log(data);
     playerdata[socket] = data;
     //Emits li method to all users telling them to update the other players.
     io.emit("li",[socket, data.user, data.model])
