@@ -3,7 +3,6 @@ import Pagination from './Pagination';
 import { listen } from './events.js';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
 
 export default function Leaderboard() {
 
@@ -102,7 +101,7 @@ export default function Leaderboard() {
       {open && (
         <div className="expanded-container" style={expandedStyle.container}>
           <div className="expanded-header" style={expandedStyle.header}>Leaderboard</div>
-          <TextField type="text" margin="dense" placeholder="Search..." style={minimizedStyle.points} onChange={event => {searchData(event.target.value)}}/>
+          <TextField type="text" margin="dense" placeholder="Search..." style={expandedStyle.search} onChange={event => {searchData(event.target.value)}}/>
           
           <div style={{padding: 5}}>
             <table style={
@@ -142,17 +141,10 @@ export default function Leaderboard() {
   )
 };
 
-/*      <Box component="span" sx={{ display: 'block',p: 1,
-          m: 1,
-          bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-          color: (theme) =>
-            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-          fontSize: '0.775rem',
-          fontWeight: '700'}}>*/
-
+// Current Leaderboard
 const CurrentUser = ({ rank, username, points, team }) => {
   return (
-    <tr style={expandedStyle.row}> 
+    <tr style={minimizedStyle.row}> 
       <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, fontSize: 15}}>{rank}</td>
       <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{username}</td>
       <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{points}</td>
@@ -160,14 +152,15 @@ const CurrentUser = ({ rank, username, points, team }) => {
   )
 };
 
+// Total Leaderboard
 const User = ({ rank, username, points, games, wins }) => {
   return (   
     <tr style={expandedStyle.row}> 
-      <td style={expandedStyle.column}>{rank}</td>
-      <td style={expandedStyle.column}>{username}</td>
-      <td style={expandedStyle.column}>{points}</td>
-      <td style={expandedStyle.column}>{games}</td>
-      <td style={expandedStyle.column}>{wins}</td>
+      <td style={expandedStyle.text}>{rank}</td>
+      <td style={expandedStyle.text}>{username}</td>
+      <td style={expandedStyle.text}>{points}</td>
+      <td style={expandedStyle.text}>{games}</td>
+      <td style={expandedStyle.text}>{wins}</td>
     </tr>  
   )
 };
@@ -182,39 +175,19 @@ const minimizedStyle = {
     float: "right",
     backgroundColor: "rgba(8, 99, 193, 0.2)",
     position: "fixed",
-    top: "0px",
-    right: "10px",
+    top: 0,
+    right: 0,
   },
   header: {
     fontWeight: "bold",
     fontSize: 15,
     backgroundColor: "rgb(66, 141, 211)",
     textAlign: "center",
-    
   },
-  text: {
-    fontSize: 11,
+  row: {
+    alignItems: "left",
+    background: "transparent"
   },
-  user: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    alignItems: "center",
-    textAlign: "center",
-    padding: 5,
-  },
-  rank: {
-    paddingLeft: 5,
-  },
-  username: {
-    paddingLeft: 5,
-  },
-  points: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    width: "100%",
-  },
-  
 };
 
 const expandedStyle = {
@@ -230,51 +203,19 @@ const expandedStyle = {
     marginLeft: "auto",
     marginRight: "auto",
   },
+  search: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    width: "100%",
+  },
   header: {
     fontWeight: "bold",
     fontSize: 27,
     textAlign: "center",
-    padding: "10px",
+    padding: 10,
     backgroundColor: "rgb(66, 141, 211)"
   },
   text: {
-    fontSize: 11,
-  },
-  colheader: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  colrank: {
-    paddingLeft: 5,
-  },
-  colname: {
-    paddingLeft: 20,
-  },
-  colpoints: {
-    paddingLeft: 20,
-  },
-  colgames: {
-    paddingLeft: 20,
-  },
-  colwins: {
-    paddingLeft: 20,
-  },
-  coltext: {
-    fontSize: 20,
-    fontFamily: "Monaco, monospace",
-  },
-  table: {
-    display: "flex",
-    width: "100%",
-  },
-  column: {
-  },
-  row: {
-    alignItems: "left",
-    background: "transparent"
   },
   paginate: {
     paddingTop: 5,

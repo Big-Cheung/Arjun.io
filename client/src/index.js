@@ -12,7 +12,7 @@ ReactDOM.render(
   <Suspense fallback={<div>Loading...</div>}>
     <Login/>
     <Leaderboard/>
-    <TitleScreen/>
+    {/* <TitleScreen/> */}
     <GameTimer/>
   </Suspense>,
   document.getElementById('root')

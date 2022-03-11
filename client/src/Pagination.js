@@ -35,4 +35,5 @@ const paginateStyle = {
     float: "center",
   },
 }
+
 export default Pagination
