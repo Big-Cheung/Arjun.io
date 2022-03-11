@@ -251,12 +251,12 @@ class Login extends React.Component {
     
     <Button variant="outlined" 
               color="secondary" onClick={() => this.handleClick(0)} style={cardStyles.container}>
-        {userEntered ? <text>Menu</text> : <text>Guest</text>}
+        {userEntered ? <text>Menu</text> : <text>Menu</text>}
       </Button>
     <div className="drop1">
       {buttonIsPressed? <div style={cardStyles.content}> 
-      <LoginDialogue/> 
-      <SignUpDialogue />
+      {!userEntered ? <div><LoginDialogue/> 
+      <SignUpDialogue /></div> : <div></div>}
       {userEntered ? <ProfileDialogue /> : <div></div>}
        </div>
       : <div><span></span></div>}
