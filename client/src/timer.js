@@ -43,24 +43,24 @@ const GameTimer = () => {
     })},[])
 
     return (
-      <div>
-        <h1 style = {cardStyles.timer}>{GameTimer ? timer : ""}</h1>
+      <div style = {cardStyles.container}>
+        <div style = {cardStyles.timer}>{GameTimer ? timer : ""}</div>
       </div>
     );
 }
 const cardStyles = {
     container: {
-      flex:1 ,
-      marginTop: 8,
-      justifyContent: "center",
+      position: "fixed",
+      margin: "auto",
+      left: 0,
+      right: 0,
+      top: 5,
+      width: 100,
     },
     timer:{
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: '40%',
-        position: 'fixed',
-        top: '30px',
-        color: 'white',
+      color: 'white',
+      textAlign: "center",
+      fontSize: 40,
     },
     lobby:{
       color:'white'
