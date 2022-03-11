@@ -59,7 +59,7 @@ const GameTimer = () => {
       <div style = {cardStyles.timer}>{GameTimer ? (timer + " Until Game " + (gameState == 0 ? "Starts!" : "Ends!")) : ""} </div>
       {(gameState === 0) &&
         <div style={{
-          color: winner === "Purple Team Wins" ? "purple" : winner === "Blue Team Wins!" ? "blue" : "white",
+          color: winner === "Purple Team Wins!" ? "#f24ef2" : winner === "Blue Team Wins!" ? "#5bc4fc" : "white",
           textAlign: "center",
           fontSize: 30,
           fontWeight: "bold",
