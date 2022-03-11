@@ -31,7 +31,7 @@ const cardStyles = {
       justifyContent: 'space-between',
       position: "fixed",
       top: "0px",
-      right: "10%",
+      right: "220px",
     },
     userName: {
       fontWeight: "bold",
