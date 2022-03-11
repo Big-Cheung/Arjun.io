@@ -94,7 +94,10 @@ export default function Leaderboard() {
         <Button className = "leaderboard-button" onClick={() => setOpen(!open)} data-toggle = "modal" style={minimizedStyle.header}>Leaderboard</Button>
         <div>
           <table>
-          {currentdata}
+            <tbody>
+
+              {currentdata}
+            </tbody>
           </table>
         </div>   
       </div>
@@ -145,9 +148,9 @@ export default function Leaderboard() {
 const CurrentUser = ({ rank, username, points, team }) => {
   return (
     <tr style={minimizedStyle.row}> 
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, fontSize: 15}}>{rank}</td>
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{username}</td>
-      <td style={{color: team === 1 ? "#1E90FF" : "	#DC143C", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15}}>{points}</td>
+      <td style={{color: team === 1 ? "#f24ef2" : "#5bc4fc", paddingTop: 5, paddingBottom: 5, fontSize: 15, fontFamily: "Consolas"}}>{rank}</td>
+      <td style={{color: team === 1 ? "#f24ef2" : "#5bc4fc", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15, fontFamily: "Consolas"}}>{username}</td>
+      <td style={{color: team === 1 ? "#f24ef2" : "#5bc4fc", paddingTop: 5, paddingBottom: 5, paddingLeft: 10, fontSize: 15, fontFamily: "Consolas"}}>{points}</td>
     </tr>
   )
 };
@@ -183,10 +186,11 @@ const minimizedStyle = {
     fontSize: 15,
     backgroundColor: "rgb(66, 141, 211)",
     textAlign: "center",
+    fontFamily: "Consolas"
   },
   row: {
     alignItems: "left",
-    background: "transparent"
+    background: "transparent",
   },
 };
 
@@ -208,6 +212,7 @@ const expandedStyle = {
     paddingLeft: 5,
     paddingRight: 5,
     width: "100%",
+    fontFamily: "Consolas"
   },
   header: {
     fontWeight: "bold",
@@ -216,6 +221,7 @@ const expandedStyle = {
     padding: 10,
     backgroundColor: "rgb(66, 141, 211)",
     borderRadius: "10px 10px 0px 0px",
+    fontFamily: "Consolas"
   },
   text: {
   },
