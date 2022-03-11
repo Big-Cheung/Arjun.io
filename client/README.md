@@ -1,9 +1,9 @@
-# Arjun.io README
+# README
 
 Authors:
-Evan Cheung
-Joon Shin
-Charlie Kuoch
+Evan Cheung,
+Joon Shin,
+Charlie Kuoch,
 Ishaan Mody
 
 ## In order to run:
