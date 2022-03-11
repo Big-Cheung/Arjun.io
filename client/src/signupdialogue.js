@@ -74,7 +74,7 @@ const SignUpDialog = () => {
   return (
     <div>
       <Button variant="outlined" 
-              color="primary" onClick={handleClickOpen}>
+              color="primary" onClick={handleClickOpen} style={{width: "120px"}}>
         Sign Up
       </Button>
       <Dialog open={open} onClose={handleClose}>

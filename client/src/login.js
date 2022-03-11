@@ -135,6 +135,7 @@ const cardStyles = {
     alignItems: "center",
     // padding: 10,
     borderRadius: 5,
+    width: "120px"
   },
   field: {
     justifyContent: "center",
@@ -254,7 +255,7 @@ class Login extends React.Component {
       </Button>
     <div className="drop1">
       {buttonIsPressed? <div style={cardStyles.content}> 
-      <LoginDialogue /> 
+      <LoginDialogue/> 
       <SignUpDialogue />
       {userEntered ? <ProfileDialogue /> : <div></div>}
        </div>

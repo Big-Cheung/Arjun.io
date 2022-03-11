@@ -70,7 +70,7 @@ const LoginDialog = () => {
   return (
     <div>
       <Button variant="outlined" 
-              color="primary" onClick={handleClickOpen}>
+              color="primary" onClick={handleClickOpen} style={{width: "120px"}}>
         Log In
       </Button>
       <Dialog open={open} onClose={handleClose}>

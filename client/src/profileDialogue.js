@@ -28,7 +28,7 @@ const ProfileDialog = () => {
   return (
     <div>
       <Button variant="outlined" 
-        color="primary" onClick={handleOpen}>
+        color="primary" onClick={handleOpen} style={{width: "120px"}}>
         Profile
       </Button>
       <Dialog open={open} onClose={handleClose}>
