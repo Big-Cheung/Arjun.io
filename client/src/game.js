@@ -7,9 +7,42 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { string } from "prop-types"
 
 const loader = new GLTFLoader(); 
-loader.load("./assets/spaniard_1color.glb",
+loader.load("./assets/spaniard.glb",
     (gltf) => {
         models["2"] = gltf.scene.children[0].geometry;
+        updateModels();
+    },
+    (xhr) => {
+    },
+    (error) => {
+        console.log(error.message)
+})
+loader.load("./assets/snowman.glb",
+    (gltf) => {
+        models["3"] = gltf.scene.children[0].geometry;
+        updateModels();
+    },
+    (xhr) => {
+    },
+    (error) => {
+        console.log(error.message)
+})
+loader.load("./assets/scatter.glb",
+    (gltf) => {
+        gltf.scene.children[0].geometry.translate(0,-0.5,0);
+        models["4"] = gltf.scene.children[0].geometry;
+        updateModels();
+    },
+    (xhr) => {
+    },
+    (error) => {
+        console.log(error.message)
+})
+loader.load("./assets/desklamp.glb",
+    (gltf) => {
+        gltf.scene.children[0].geometry.translate(0,0.2,0);
+        gltf.scene.children[0].geometry.scale(1,0.8,1);
+        models["5"] = gltf.scene.children[0].geometry;
         updateModels();
     },
     (xhr) => {
@@ -84,7 +117,7 @@ class PlayerModel {
         this.tag.fontSize = 0.5; 
         this.tag.anchorX = "center";
         this.tag.anchory = "center";
-        this.tag.position.y = 1.25;
+        this.tag.position.y = 1.5;
         this.tag.outlineWidth = "10%";
 
         this.group.add(this.tag);
@@ -114,7 +147,7 @@ class OtherPlayer {
     //Constructory/Destructor
     constructor(name,pos=[0,0,0],model="0") {
         this.name = name;
-        this.obj = new PlayerModel(name,0x008800,model);
+        this.obj = new PlayerModel(name,0x888888,model);
         this.position = new Vector3(...pos);
     }
 
