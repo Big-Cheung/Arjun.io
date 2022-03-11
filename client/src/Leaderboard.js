@@ -202,6 +202,7 @@ const expandedStyle = {
     right: 0,
     marginLeft: "auto",
     marginRight: "auto",
+    borderRadius: 10,
   },
   search: {
     paddingLeft: 5,
@@ -213,7 +214,8 @@ const expandedStyle = {
     fontSize: 27,
     textAlign: "center",
     padding: 10,
-    backgroundColor: "rgb(66, 141, 211)"
+    backgroundColor: "rgb(66, 141, 211)",
+    borderRadius: "10px 10px 0px 0px",
   },
   text: {
   },
